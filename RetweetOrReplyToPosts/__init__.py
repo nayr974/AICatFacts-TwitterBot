@@ -37,7 +37,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
     logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
     tweets = api.search(
-        q=topic["search_term"], result_type=topic["result_type"], count=200, lang='en')
+        q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en')
     for tweet in tweets:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=2))
         cleantext = clean(tweet.text)
@@ -71,7 +71,7 @@ def main(mytimer: func.TimerRequest) -> None:
                         reply = reply + f" {trend}"
                     
 
-                    if (random.randint(1, 10) == 10):
+                    if (random.randint(1, 12) == 12):
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                         )
