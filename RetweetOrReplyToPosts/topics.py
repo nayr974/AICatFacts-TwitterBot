@@ -13,7 +13,7 @@ topics = [
         "include_first_sentance":
         True,
         "result_type":
-        "popular"
+        "mixed"
     },
     {
         'search_term':
@@ -63,7 +63,7 @@ topics = [
         "include_first_sentance":
         False,
         "result_type":
-        "popular"
+        "mixed"
     },
     {
         'search_term':

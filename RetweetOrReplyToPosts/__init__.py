@@ -24,6 +24,7 @@ def get_random_trend(api):
     return get_safe_trend(trending)
 
 
+#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
@@ -59,6 +60,8 @@ def main(mytimer: func.TimerRequest) -> None:
 
                 reply = clean(reply)
 
+                logging.info(reply)
+
                 #look for garbage
                 regex = re.compile('[@_#$%^&*()<>/\|}{~:]')
                 if regex.search(reply) == None and not is_content_offensive(reply):
@@ -66,6 +69,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
                     if topic == topics[0] and trend[0] == '#':
                         reply = reply + f" {trend}"
+                    
 
                     if (random.randint(1, 10) == 10):
                         api.update_status(

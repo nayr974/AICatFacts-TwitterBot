@@ -76,7 +76,7 @@ def get_generated_catfact(text):
 
 
 def get_generated_response(text, length):
-    endpoint = os.environ['GENERATE_FACT_URL']
+    endpoint = os.environ['GENERATE_REPLY_URL']
     json = {'prompt': {'text': text, 'isContinuation': True}, 'length': length}
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}
@@ -105,7 +105,6 @@ def get_api():
 
 
 def is_content_offensive(content):
-    logging.info(predict([content])[0])
     if predict([content])[0] == 1:
         return True
 
