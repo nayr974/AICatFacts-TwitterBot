@@ -17,7 +17,7 @@ def clean(text):
         '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ')
         
 def deploy_catfact_model():
-    endpoint = os.environ['DEPLOY_URL']"
+    endpoint = os.environ['DEPLOY_URL']
     login_json = {
         "operationName":
         "LogInByPassword",
