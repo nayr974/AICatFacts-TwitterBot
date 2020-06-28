@@ -20,4 +20,6 @@ def main(mytimer: func.TimerRequest) -> None:
                 api.create_friendship(screen_name=tweet.user.screen_name)
                 time.sleep(5)
             except tweepy.TweepError as e:
+                #probably hit rate limit
                 logging.info(e)
+                break

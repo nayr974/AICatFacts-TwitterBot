@@ -15,7 +15,9 @@ def followall(api):
                 follower.follow()
                 time.sleep(5)
             except tweepy.TweepError as e:
+                #probably hit rate limit
                 logging.info(e)
+                break
 
 
 def main(mytimer: func.TimerRequest) -> None:

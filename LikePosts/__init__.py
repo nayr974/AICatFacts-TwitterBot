@@ -23,4 +23,6 @@ def main(mytimer: func.TimerRequest) -> None:
                 api.create_favorite(tweet.id)
                 time.sleep(5)
             except tweepy.TweepError as e:
+                #probably hit rate limit
                 logging.info(e)
+                break
