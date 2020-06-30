@@ -26,6 +26,10 @@ def get_random_trend(api):
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
+    if datetime.datetime.utcnow().hour > 4 and datetime.datetime.utcnow().hour < 15:
+        logging.info("Outside of run time range")
+        return
+
     api = get_api()
 
     topic = random.choice(topics)

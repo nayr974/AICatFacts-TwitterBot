@@ -111,6 +111,9 @@ def is_content_offensive(content):
     if re.search(offensive, content) is not None:
         return True
 
+    if "blog" in content or "article" in content:
+        return True
+
     return False
 
 

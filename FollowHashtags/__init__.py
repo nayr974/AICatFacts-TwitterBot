@@ -11,7 +11,7 @@ def main(mytimer: func.TimerRequest) -> None:
     logging.info('Searching hashtags')
     tweets = api.search(
         q=f'"#catsoftwitter" -filter:links',
-        count=5,
+        count=3,
         locale='en')
     for tweet in tweets:
         if not tweet.user.following:
