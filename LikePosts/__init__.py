@@ -14,8 +14,7 @@ def main(mytimer: func.TimerRequest) -> None:
         q=
         f'"artificial intelligence" OR "cute cat" OR "adorable cat" OR "machine learning" OR "cat fact" OR "#catsoftwitter" -filter:links',
         result_type="recent",
-        count=15,
-        lang='en')
+        count=14)
     for tweet in tweets:
         if tweet.favorited == False and not is_content_offensive(tweet.text):
             try:

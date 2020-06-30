@@ -29,6 +29,7 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     topic = random.choice(topics)
+    trend = " "
 
     if topic == topics[0]:  #TRENDING
         trend = get_random_trend(api)
@@ -72,14 +73,18 @@ def main(mytimer: func.TimerRequest) -> None:
                     
 
                     if (random.randint(1, 12) == 12):
+                        logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                         )
+                        logging.info("Posted. ")
                     else:
+                        logging.info("Posting. ")
                         api.update_status(
                             f"@{tweet.user.screen_name} {reply}",
                             in_reply_to_status_id=tweet.id,
                             auto_populate_reply_metadata=True)
+                        logging.info("Posted. ")
                     break
             except:
                 continue
