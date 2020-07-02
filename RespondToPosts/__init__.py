@@ -26,6 +26,9 @@ def get_random_trend(api):
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
+
+    # Azure cron timers don't seem to allow schedules that go overnight (15-4), or have multiple timer triggers (15-24, 0-4)
+    # so a code based check is used here instead.
     if datetime.datetime.utcnow().hour > 4 and datetime.datetime.utcnow().hour < 15:
         logging.info("Outside of run time range")
         return
@@ -37,12 +40,13 @@ def main(mytimer: func.TimerRequest) -> None:
 
     if topic == topics[0]:  #TRENDING
         trend = get_random_trend(api)
-        topic["search_term"] = f'"{trend}" -filter:links'
+        topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
         topic["include_term"] = trend
 
     logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
     tweets = api.search(
         q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en')
+        
     for tweet in tweets:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=2))
         cleantext = clean(tweet.text)
@@ -76,7 +80,7 @@ def main(mytimer: func.TimerRequest) -> None:
                         reply = reply + f" {trend}"
                     
 
-                    if (random.randint(1, 12) == 12):
+                    if (random.randint(1, 10) >= 7):
                         logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"

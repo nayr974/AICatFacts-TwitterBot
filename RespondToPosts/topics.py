@@ -1,7 +1,7 @@
 topics = [
     {
         'search_term':
-        '"TRENDING" -filter:links',
+        '"TRENDING"',
         'include_term':
         'TRENDING',
         'prompts': [
@@ -17,7 +17,7 @@ topics = [
     },
     {
         'search_term':
-        '"my cat" cute -filter:links',
+        '"my cat" cute filter:safe -filter:links -filter:retweets ',
         'include_term':
         'my cat',
         'prompts': [
@@ -32,7 +32,7 @@ topics = [
     },
     {
         'search_term':
-        '"#CatsOfTwitter" -filter:links',
+        '"#CatsOfTwitter" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'my cat',
         'prompts': [
@@ -47,7 +47,7 @@ topics = [
     },
     {
         'search_term':
-        '"machine learning" -filter:links',
+        '"machine learning" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'machine learning',
         'prompts': [
@@ -64,7 +64,7 @@ topics = [
     },
     {
         'search_term':
-        '"machine learning" -filter:links',
+        '"machine learning" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'machine learning',
         'prompts': [
@@ -79,7 +79,7 @@ topics = [
     },
     {
         'search_term':
-        '"artificial intelligence" -filter:links',
+        '"artificial intelligence" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'artificial intelligence',
         'prompts': [
@@ -95,7 +95,7 @@ topics = [
     },
     {
         'search_term':
-        '"cat fact" -filter:links',
+        '"cat fact" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'cat fact',
         'prompts': [
@@ -113,7 +113,7 @@ topics = [
     },
     {
         'search_term':
-        '"cat fact" -filter:links',
+        '"cat fact" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'cat fact',
         'prompts': [
@@ -131,7 +131,7 @@ topics = [
     },
     {
         'search_term':
-        '"cat fact" -filter:links',
+        '"cat fact" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'cat fact',
         'prompts': [

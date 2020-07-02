@@ -10,7 +10,7 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
     logging.info('Searching hashtags')
     tweets = api.search(
-        q=f'"#catsoftwitter" -filter:links',
+        q=f'"#catsoftwitter" filter:safe -filter:links -filter:retweets ',
         count=3,
         locale='en')
     for tweet in tweets:

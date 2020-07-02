@@ -50,7 +50,7 @@ def main(mytimer: func.TimerRequest) -> None:
                 "cheetah"
             ]) else generate_fact()
 
-    new_fact = generate_fact() + ' #ai #cat #fact'
+    new_fact = generate_fact() + ' #ai #cats'
 
     logging.info('Posting content.')
     tweet(new_fact)
