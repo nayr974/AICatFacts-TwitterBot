@@ -41,7 +41,7 @@ def main(mytimer: func.TimerRequest) -> None:
     if topic == topics[0]:  #TRENDING
         trend = get_random_trend(api)
         topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
-        topic["include_term"] = trend
+        topic["include_term"] = trend        
 
     logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
     tweets = api.search(
@@ -79,7 +79,6 @@ def main(mytimer: func.TimerRequest) -> None:
                     if topic == topics[0] and trend[0] == '#':
                         reply = reply + f" {trend}"
                     
-
                     if (random.randint(1, 10) >= 7):
                         logging.info("Posting. ")
                         api.update_status(

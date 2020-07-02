@@ -16,7 +16,7 @@ def main(mytimer: func.TimerRequest) -> None:
         
     for friend in friends:
 
-        if unfollow_count >= 50:
+        if unfollow_count >= 25:
             break
 
         if friend not in followers and random.randint(0,3) == 0:
