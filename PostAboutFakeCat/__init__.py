@@ -1,10 +1,10 @@
 import logging
 import re
-import tweepy
-import requests
 import os
+import io
 import random
 
+from urllib.request import Request, urlopen
 from ..utils import clean, get_api, is_content_offensive, get_generated_response
 
 import azure.functions as func
@@ -13,7 +13,6 @@ prompts = [
     "This cat", "This cat is named", "This is a cat named", "This is a cat that",
     "You might not believe it, but this cat", "A cat named"
 ]
-
 
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
@@ -46,14 +45,13 @@ def main(mytimer: func.TimerRequest) -> None:
     info = get_catinfo()
 
     logging.info("Downloading image.")
-    filename = 'temp.jpg'
-    request = requests.get("https://thiscatdoesnotexist.com/", stream=True)
-    if request.status_code == 200:
-        with open(filename, 'wb') as image:
-            for chunk in request:
-                image.write(chunk)
 
-        api.update_with_media(filename, status=info)
-        os.remove(filename)
-    else:
-        logging.info("Error downloading image.")
+    request = Request('https://thiscatdoesnotexist.com/', headers={'User-Agent': 'Mozilla/5.0'})
+
+    try:
+        with urlopen(request) as url:
+            image = io.BytesIO(url.read())
+            api.update_with_media('cat.jpg', status=info, file=image)
+            logging.info("Posted.")
+    except Exception as e:
+        logging.info(e)

@@ -57,7 +57,7 @@ def main(mytimer: func.TimerRequest) -> None:
             try:
                 logging.info("Good tweet. Getting reply.")
                 prompt = random.choice(topic["prompts"])
-                reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 300))
+                reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
 
                 reply = reply[:reply.rfind('.') + 1]
 
