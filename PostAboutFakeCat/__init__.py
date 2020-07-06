@@ -5,7 +5,7 @@ import io
 import random
 
 from urllib.request import Request, urlopen
-from ..utils import clean, get_api, is_content_offensive, get_generated_response
+from ..utils import clean, get_api, is_content_offensive, get_generated_response, set_random_seed
 
 import azure.functions as func
 
@@ -17,6 +17,7 @@ prompts = [
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
+    set_random_seed()
     prompt = random.choice(prompts)
 
     generate_count = 0
@@ -40,7 +41,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if regex.search(reply) is not None and not is_content_offensive(reply):
             return get_catinfo()
 
-        return f"{prompt} {reply} #ai #catsoftwitter #caturday"
+        return f"{prompt} {reply} #catsoftwitter"
 
     info = get_catinfo()
 

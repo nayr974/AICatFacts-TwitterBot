@@ -5,9 +5,16 @@ import re
 import requests
 import json
 import tweepy
+import random
 from profanity_check import predict
 from datetime import datetime, timedelta
 
+def set_random_seed():
+    t = int( time.time() * 1000.0 )
+    random.seed( ((t & 0xff000000) >> 24) +
+                ((t & 0x00ff0000) >>  8) +
+                ((t & 0x0000ff00) <<  8) +
+                ((t & 0x000000ff) << 24)   )
 
 def clean(text):
     cleanr = re.compile('@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+')

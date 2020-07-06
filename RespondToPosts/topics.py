@@ -17,36 +17,6 @@ topics = [
     },
     {
         'search_term':
-        '"my cat" cute filter:safe -filter:links -filter:retweets ',
-        'include_term':
-        'my cat',
-        'prompts': [
-            "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Your cats nose is cute. It's whiskers are cute.",
-            "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
-            "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat."
-        ],
-        "include_first_sentance":
-        False,
-        "result_type":
-        "recent"
-    },
-    {
-        'search_term':
-        '"#CatsOfTwitter" filter:safe -filter:links -filter:retweets ',
-        'include_term':
-        'my cat',
-        'prompts': [
-            "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Your cats nose is cute. It's whiskers are cute.",
-            "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
-            "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat."
-        ],
-        "include_first_sentance":
-        False,
-        "result_type":
-        "recent"
-    },
-    {
-        'search_term':
         '"machine learning" filter:safe -filter:links -filter:retweets ',
         'include_term':
         'machine learning',
@@ -71,6 +41,36 @@ topics = [
             "I love machine learning.", "It's amazing how far machine learning has come.",
             "Even the best machine learning today isn't very good.",
             "Some people think that machine learning is dangerous."
+        ],
+        "include_first_sentance":
+        False,
+        "result_type":
+        "recent"
+    },
+    {
+        'search_term':
+        '"my cat" cute filter:safe -filter:links -filter:retweets ',
+        'include_term':
+        'my cat',
+        'prompts': [
+            "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Your cats nose is cute. It's whiskers are cute.",
+            "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
+            "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat."
+        ],
+        "include_first_sentance":
+        False,
+        "result_type":
+        "recent"
+    },
+    {
+        'search_term':
+        '"#CatsOfTwitter" filter:safe -filter:links -filter:retweets ',
+        'include_term':
+        'my cat',
+        'prompts': [
+            "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Your cats nose is cute. It's whiskers are cute.",
+            "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
+            "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat."
         ],
         "include_first_sentance":
         False,

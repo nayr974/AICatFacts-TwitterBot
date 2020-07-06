@@ -3,7 +3,7 @@ import re
 import random
 
 from datetime import datetime
-from ..utils import clean, get_api, get_generated_catfact
+from ..utils import clean, get_api, get_generated_catfact, set_random_seed
 from .catfacts import facts
 
 import azure.functions as func
@@ -24,6 +24,7 @@ def get_seed_facts():
 
 
 def main(mytimer: func.TimerRequest) -> None:
+    set_random_seed()
     prompt = get_seed_facts()
 
     generate_count = 0
@@ -50,7 +51,7 @@ def main(mytimer: func.TimerRequest) -> None:
                 "cheetah"
             ]) else generate_fact()
 
-    new_fact = generate_fact() + ' #ai #cats'
+    new_fact = generate_fact() 
 
     logging.info('Posting content.')
     tweet(new_fact)

@@ -4,7 +4,7 @@ import tweepy
 import re
 import random
 import datetime
-from ..utils import clean, get_api, is_content_offensive, get_generated_response
+from ..utils import clean, get_api, is_content_offensive, get_generated_response, set_random_seed
 from .topics import topics
 
 import azure.functions as func
@@ -26,6 +26,7 @@ def get_random_trend(api):
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
+    set_random_seed()
 
     # Azure cron timers don't seem to allow schedules that go overnight (15-4), or have multiple timer triggers (15-24, 0-4)
     # so a code based check is used here instead.
@@ -79,7 +80,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     if topic == topics[0] and trend[0] == '#':
                         reply = reply + f" {trend}"
                     
-                    if (random.randint(1, 10) >= 7):
+                    if (random.randint(1, 10) >= 8):
                         logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
