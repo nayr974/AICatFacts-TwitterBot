@@ -21,7 +21,7 @@ def clean(text):
     cleantext = re.sub(cleanr, '', text).strip().replace('\n', ' ').replace('"', '')
     cleantext = re.sub('\s{2,}', ' ', cleantext)
     return cleantext.replace(' ,', ',').replace(' .', '.').replace(' !', '!').replace(
-        '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ')
+        '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',')
         
 def deploy_catfact_model():
     endpoint = os.environ['DEPLOY_URL']

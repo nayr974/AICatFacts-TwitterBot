@@ -80,7 +80,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     if topic == topics[0] and trend[0] == '#':
                         reply = reply + f" {trend}"
                     
-                    if (random.randint(1, 10) >= 8):
+                    if (random.randint(1, 10) >= 9):
                         logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
