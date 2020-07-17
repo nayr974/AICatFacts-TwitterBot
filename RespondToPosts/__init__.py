@@ -40,13 +40,11 @@ def main(mytimer: func.TimerRequest) -> None:
 
     api = get_api()
     trend = None
-    topic = None
+    topic = cat_fact
 
     def get_topic_tweets(api):
         nonlocal trend
         nonlocal topic
-        topic = cat_fact
-        logging.info("Checking for cat facts")
 
         tweets = get_tweets(api, topic)
 
@@ -61,15 +59,22 @@ def main(mytimer: func.TimerRequest) -> None:
 
             tweets = get_tweets(api, topic)
 
-        return tweets if len(tweets) > 0 else get_topic_tweets(api)
+        if len(tweets) > 0:
+            return tweets
+        else:
+            topic = random.choice(other_topics)
+            return get_topic_tweets(api)
 
     tweet_reply_count = 0
 
     def tweet_reply(api):
+        nonlocal topic
+        nonlocal trend
         nonlocal tweet_reply_count
         tweet_reply_count = tweet_reply_count + 1
         if tweet_reply_count > 10:
-            break
+            logging.info("Reply retry limit reached.")
+            return
 
         tweets = get_topic_tweets(api)
         for tweet in tweets:
@@ -101,7 +106,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     if regex.search(reply) == None and not is_content_offensive(reply):
                         logging.info("Good reply. Posting. ")
 
-                        if topic == other_topics[0] and trend[0] == '#':
+                        if topic == other_topics[0] and trend and trend[0] == '#':
                             reply = reply + f" {trend}"
                     
                         logging.info("Posting. ")
@@ -109,9 +114,16 @@ def main(mytimer: func.TimerRequest) -> None:
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                         )
                         logging.info("Posted. ")
-                        break
+                        return
                 except:
                     continue
-        tweet_reply(api)
-        
+
+        topic = random.choice(other_topics)
+        if topic == other_topics[0]:  #TRENDING
+            trend = get_random_trend(api)
+            topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
+            topic["include_term"] = trend   
+
+        return tweet_reply(api)
+
     tweet_reply(api)
