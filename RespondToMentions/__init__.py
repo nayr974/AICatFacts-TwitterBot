@@ -18,9 +18,9 @@ def main(mytimer: func.TimerRequest) -> None:
             datetime.datetime.utcnow() - datetime.timedelta(minutes=30))
         if recent_tweet:
 
-            #If a reply to another tweet, 50-50 we will reply again
+            #If a reply to another tweet, only a chance we will reply again
             if tweet.in_reply_to_status_id is not None:
-                if random.randint(0, 1) == 0:
+                if random.randint(0, 2) == 0:
                     continue
 
             logging.info('Replying to: ' + tweet.text)

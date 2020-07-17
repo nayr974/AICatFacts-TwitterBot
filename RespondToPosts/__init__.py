@@ -63,53 +63,55 @@ def main(mytimer: func.TimerRequest) -> None:
 
         return tweets if len(tweets) > 0 else get_topic_tweets(api)
 
-    tweets = get_topic_tweets(api)
+    tweet_reply_count = 0
 
-    for tweet in tweets:
-        recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=7))
-        cleantext = clean(tweet.text)
+    def tweet_reply(api):
+        nonlocal tweet_reply_count
+        tweet_reply_count = tweet_reply_count + 1
+        if tweet_reply_count > 10:
+            break
 
-        if recent_tweet and not is_content_offensive(cleantext) and len(cleantext) > 50:
-            if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
-                continue
-            try:
-                logging.info("Good tweet. Getting reply.")
-                prompt = random.choice(topic["prompts"])
-                reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
+        tweets = get_topic_tweets(api)
+        for tweet in tweets:
+            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=7))
+            cleantext = clean(tweet.text)
 
-                reply = reply[:reply.rfind('.') + 1]
-
-                if len(reply) < 20:
+            if recent_tweet and not is_content_offensive(cleantext) and len(cleantext) > 50:
+                if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
                     continue
+                try:
+                    logging.info("Good tweet. Getting reply.")
+                    prompt = random.choice(topic["prompts"])
+                    reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
 
-                if topic["include_first_sentance"] == True:
-                    reply = f"{prompt} {reply}"
+                    reply = reply[:reply.rfind('.') + 1]
 
-                reply = clean(reply)
+                    if len(reply) < 20:
+                        continue
 
-                logging.info(reply)
+                    if topic["include_first_sentance"] == True:
+                        reply = f"{prompt} {reply}"
 
-                #look for garbage
-                regex = re.compile('[@_#$%^&*()<>/\|}{~:]')
-                if regex.search(reply) == None and not is_content_offensive(reply):
-                    logging.info("Good reply. Posting. ")
+                    reply = clean(reply)
 
-                    if topic == other_topics[0] and trend[0] == '#':
-                        reply = reply + f" {trend}"
+                    logging.info(reply)
+
+                    #look for garbage
+                    regex = re.compile('[@_#$%^&*()<>/\|}{~:]')
+                    if regex.search(reply) == None and not is_content_offensive(reply):
+                        logging.info("Good reply. Posting. ")
+
+                        if topic == other_topics[0] and trend[0] == '#':
+                            reply = reply + f" {trend}"
                     
-                    if (random.randint(1, 10) >= 0):
                         logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                         )
                         logging.info("Posted. ")
-                    else:
-                        logging.info("Posting. ")
-                        api.update_status(
-                            f"@{tweet.user.screen_name} {reply}",
-                            in_reply_to_status_id=tweet.id,
-                            auto_populate_reply_metadata=True)
-                        logging.info("Posted. ")
-                    break
-            except:
-                continue
+                        break
+                except:
+                    continue
+        tweet_reply(api)
+        
+    tweet_reply(api)
