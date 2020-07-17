@@ -1,4 +1,23 @@
-topics = [
+cat_fact = {
+        'search_term':
+        '"cat fact" filter:safe -filter:links -filter:retweets ',
+        'include_term':
+        'cat fact',
+        'prompts': [
+            "My algorithms have determined that this fact is",
+            "While interesting, my algorithms indicate this fact is",
+            "My algorithms agree, this fact is", "My algorithms disagree, this fact is",
+            "My algorithms just reminded me that this fact is",
+            "Very interesting, my algorithms show that this fact is"
+            "By running this through my algorithms I have determined"
+        ],
+        "include_first_sentance":
+        True,
+        "result_type":
+        "recent"
+    }
+
+other_topics = [
     {
         'search_term':
         '"TRENDING"',
@@ -75,60 +94,6 @@ topics = [
         ],
         "include_first_sentance":
         False,
-        "result_type":
-        "recent"
-    },
-    {
-        'search_term':
-        '"cat fact" filter:safe -filter:links -filter:retweets ',
-        'include_term':
-        'cat fact',
-        'prompts': [
-            "My algorithms have determined that this fact is",
-            "While interesting, my algorithms indicate this fact is",
-            "My algorithms agree, this fact is", "My algorithms disagree, this fact is",
-            "My algorithms just reminded me that this fact is",
-            "Very interesting, my algorithms show that this fact is"
-            "By running this through my algorithms I have determined"
-        ],
-        "include_first_sentance":
-        True,
-        "result_type":
-        "recent"
-    },
-    {
-        'search_term':
-        '"cat fact" filter:safe -filter:links -filter:retweets ',
-        'include_term':
-        'cat fact',
-        'prompts': [
-            "My algorithms have determined that this fact is",
-            "While interesting, my algorithms indicate this fact is",
-            "My algorithms agree, this fact is", "My algorithms disagree, this fact is",
-            "My algorithms just reminded me that this fact is",
-            "Very interesting, my algorithms show that this fact is"
-            "By running this through my algorithms I have determined"
-        ],
-        "include_first_sentance":
-        True,
-        "result_type":
-        "recent"
-    },
-    {
-        'search_term':
-        '"cat fact" filter:safe -filter:links -filter:retweets ',
-        'include_term':
-        'cat fact',
-        'prompts': [
-            "My algorithms have determined that this fact is",
-            "While interesting, my algorithms indicate this fact is",
-            "My algorithms agree, this fact is", "My algorithms disagree, this fact is",
-            "My algorithms just reminded me that this fact is",
-            "Very interesting, my algorithms show that this fact is"
-            "By running this through my algorithms I have determined"
-        ],
-        "include_first_sentance":
-        True,
         "result_type":
         "recent"
     }

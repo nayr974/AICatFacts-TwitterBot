@@ -14,7 +14,8 @@ prompts = [
     "You might not believe it, but this cat", "A cat named"
 ]
 
-def main(mytimer: func.TimerRequest) -> None:
+def main(req: func.HttpRequest) -> func.HttpResponse:
+#def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     set_random_seed()
@@ -51,8 +52,10 @@ def main(mytimer: func.TimerRequest) -> None:
 
     try:
         with urlopen(request) as url:
-            image = io.BytesIO(url.read())
-            api.update_with_media('cat.jpg', status=info, file=image)
+            data = url.read()
+            image = io.BytesIO(data)
+            media_object = api.media_upload('cat.jpg', file=image)
+            api.update_status(status=info, media_ids=[media_object.media_id])
             logging.info("Posted.")
     except Exception as e:
         logging.info(e)

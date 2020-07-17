@@ -5,7 +5,7 @@ import re
 import random
 import datetime
 from ..utils import clean, get_api, is_content_offensive, get_generated_response, set_random_seed
-from .topics import topics
+from .topics import cat_fact, other_topics
 
 import azure.functions as func
 
@@ -23,6 +23,10 @@ def get_random_trend(api):
 
     return get_safe_trend(trending)
 
+def get_tweets(api, topic):
+    logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
+    return api.search(
+        q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en')
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
@@ -35,25 +39,38 @@ def main(mytimer: func.TimerRequest) -> None:
         return
 
     api = get_api()
+    trend = None
+    topic = None
 
-    topic = random.choice(topics)
-    trend = " "
+    def get_topic_tweets(api):
+        nonlocal trend
+        nonlocal topic
+        topic = cat_fact
+        logging.info("Checking for cat facts")
 
-    if topic == topics[0]:  #TRENDING
-        trend = get_random_trend(api)
-        topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
-        topic["include_term"] = trend        
+        tweets = get_tweets(api, topic)
 
-    logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
-    tweets = api.search(
-        q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en')
-        
+        if len(tweets) <= 0:
+            logging.info("None found. New topic.")
+            topic = random.choice(other_topics)
+
+            if topic == other_topics[0]:  #TRENDING
+                trend = get_random_trend(api)
+                topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
+                topic["include_term"] = trend   
+
+            tweets = get_tweets(api, topic)
+
+        return tweets if len(tweets) > 0 else get_topic_tweets(api)
+
+    tweets = get_topic_tweets(api)
+
     for tweet in tweets:
-        recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=2))
+        recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=7))
         cleantext = clean(tweet.text)
 
         if recent_tweet and not is_content_offensive(cleantext) and len(cleantext) > 50:
-            if topic != topics[0] and not topic["include_term"].lower() in cleantext.lower():
+            if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
                 continue
             try:
                 logging.info("Good tweet. Getting reply.")
@@ -77,10 +94,10 @@ def main(mytimer: func.TimerRequest) -> None:
                 if regex.search(reply) == None and not is_content_offensive(reply):
                     logging.info("Good reply. Posting. ")
 
-                    if topic == topics[0] and trend[0] == '#':
+                    if topic == other_topics[0] and trend[0] == '#':
                         reply = reply + f" {trend}"
                     
-                    if (random.randint(1, 10) >= 9):
+                    if (random.randint(1, 10) >= 0):
                         logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
