@@ -1,8 +1,9 @@
 import logging
 import re
-import os
 import io
 import random
+import tempfile
+import os.path
 
 from urllib.request import Request, urlopen
 from ..utils import clean, get_api, is_content_offensive, get_generated_response, set_random_seed
@@ -54,8 +55,12 @@ def main(mytimer: func.TimerRequest) -> None:
         with urlopen(request) as url:
             data = url.read()
             image = io.BytesIO(data)
-            media_object = api.media_upload('cat.jpg', file=image)
-            api.update_status(status=info, media_ids=[media_object.media_id])
-            logging.info("Posted.")
+            with tempfile.TemporaryDirectory() as td:
+                file_name = os.path.join(td, "cat.jpg")
+                with open(file_name, 'wb') as out:
+                    out.write(image.read())
+                media_object = api.media_upload(file_name)
+                api.update_status(status=info, media_ids=[media_object.media_id])
+                logging.info("Posted.")
     except Exception as e:
         logging.info(e)
