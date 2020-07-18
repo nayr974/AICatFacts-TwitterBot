@@ -20,8 +20,8 @@ def clean(text):
     cleanr = re.compile('@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+')
     cleantext = re.sub(cleanr, '', text).strip().replace('\n', ' ').replace('"', '')
     cleantext = re.sub('\s{2,}', ' ', cleantext)
-    return cleantext.replace(' ,', ',').replace(' .', '.').replace(' !', '!').replace(
-        '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',')
+    return cleantext.replace(' ,', ',').replace('.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
+        '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',').replace('...', '.').replace('..', '.')
         
 def deploy_catfact_model():
     endpoint = os.environ['DEPLOY_URL']
@@ -71,10 +71,10 @@ def get_generated_catfact(text):
         'prompt': {
             'text': text
         },
-        'length': 200,
+        'length': 300,
         'forceNoEnd': False,
-        'topP': 0.4,
-        'temperature': 1.76
+        'topP': 0.80,
+        'temperature': 1.45
     }
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}

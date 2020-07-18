@@ -15,7 +15,6 @@ prompts = [
     "You might not believe it, but this cat", "A cat named"
 ]
 
-#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
@@ -43,7 +42,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if regex.search(reply) is not None and not is_content_offensive(reply):
             return get_catinfo()
 
-        return f"{prompt} {reply} #catsoftwitter"
+        return f"{prompt} {reply} #catsoftwitter #caturday"
 
     info = get_catinfo()
 

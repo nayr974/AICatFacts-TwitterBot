@@ -28,7 +28,6 @@ def get_tweets(api, topic):
     return api.search(
         q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en')
 
-#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
     set_random_seed()
 
@@ -82,7 +81,7 @@ def main(mytimer: func.TimerRequest) -> None:
             cleantext = clean(tweet.text)
 
             if recent_tweet and not is_content_offensive(cleantext) and len(cleantext) > 50:
-                if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
+                if topic != cat_fact and topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
                     continue
                 try:
                     logging.info("Good tweet. Getting reply.")

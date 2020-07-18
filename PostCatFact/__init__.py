@@ -16,16 +16,13 @@ def get_seed_facts():
         random.choice(split_facts),
         random.choice(split_facts),
         random.choice(split_facts),
-        random.choice(split_facts),
-        random.choice(split_facts),
         random.choice(split_facts)
     ]
-    return "FACT: " + "\nFACT: ".join(seed_facts) + "\n"
+    return "\n\n".join(seed_facts) + "\n\nHere's an interesting fact about cats."
 
 
-def main(mytimer: func.TimerRequest) -> None:
+def main(mytimer: func.TimerRequest) -> None:  
     set_random_seed()
-    prompt = get_seed_facts()
 
     generate_count = 0
 
@@ -33,25 +30,28 @@ def main(mytimer: func.TimerRequest) -> None:
 
         nonlocal generate_count
         generate_count = generate_count + 1
-        if generate_count > 20:
+        if generate_count > 30:
             raise Exception('generation limit hit')
 
         logging.info('Generating fact.')
-        fact = get_generated_catfact(prompt)
+        fact = get_generated_catfact(get_seed_facts())
         fact = fact[:fact.find("\n")]
         fact = fact[:fact.rfind(".") + 1]
         fact = clean(fact)
         logging.info(fact)
 
-        unwanted_chars = re.compile('[@_#$%^&*<>/\|}{~:-]')
+        unwanted_chars = re.compile('[@_#$%^&*<>/\|}{~:-]()')
 
-        return fact if fact.find(".") is not None and unwanted_chars.search(fact) == None and any(
+        return fact if fact.find(".") is not None and unwanted_chars.search(fact) == None and not any(
             x in fact.lower() for x in [
-                "cat ", "cats ", "cat.", "cats.", "cats'", "kitten", "feline", "lion", "tiger",
+                " dog ", " rat ", " mouse ", "bitch"
+            ]) and any(
+            x in fact.lower() for x in [
+                "cat ", "cats ", "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty", "feline", "lion", "tiger",
                 "cheetah"
             ]) else generate_fact()
 
-    new_fact = generate_fact() 
+    new_fact = f"{generate_fact()} #ai #catfacts"
 
     logging.info('Posting content.')
     tweet(new_fact)
