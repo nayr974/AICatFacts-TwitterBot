@@ -16,10 +16,10 @@ def main(mytimer: func.TimerRequest) -> None:
         
     for friend in friends:
 
-        if unfollow_count >= 25:
+        if unfollow_count >= 1:
             break
 
-        if friend not in followers and random.randint(0,3) == 0:
+        if friend not in followers and random.SystemRandom().randint(0,3) == 0:
             try:
                 logging.info(f"Unfollowing {friend}")
                 api.destroy_friendship(friend)

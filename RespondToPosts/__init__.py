@@ -4,7 +4,7 @@ import tweepy
 import re
 import random
 import datetime
-from ..utils import clean, get_api, is_content_offensive, get_generated_response, set_random_seed
+from ..utils import clean, get_api, is_content_offensive, get_generated_response
 from .topics import cat_fact, other_topics
 
 import azure.functions as func
@@ -15,7 +15,7 @@ def get_random_trend(api):
     trending = api.trends_place(23424977)  #USA
 
     def get_safe_trend(trending):
-        trend = random.choice(trending[0]['trends'][:15])
+        trend = random.SystemRandom().choice(trending[0]['trends'][:15])
         if not is_content_offensive(trend['name']):
             return trend['name']
         else:
@@ -30,7 +30,6 @@ def get_tweets(api, topic):
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
-    set_random_seed()
 
     # Azure cron timers don't seem to allow schedules that go overnight (15-4), or have multiple timer triggers (15-24, 0-4)
     # so a code based check is used here instead.
@@ -50,7 +49,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         if len(tweets) <= 0:
             logging.info("None found. New topic.")
-            topic = random.choice(other_topics)
+            topic = random.SystemRandom().choice(other_topics)
 
             if topic == other_topics[0]:  #TRENDING
                 trend = get_random_trend(api)
@@ -62,7 +61,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if len(tweets) > 0:
             return tweets
         else:
-            topic = random.choice(other_topics)
+            topic = random.SystemRandom().choice(other_topics)
             return get_topic_tweets(api)
 
     tweet_reply_count = 0
@@ -88,12 +87,16 @@ def main(mytimer: func.TimerRequest) -> None:
                     continue
                 try:
                     logging.info("Good tweet. Getting reply.")
-                    prompt = random.choice(topic["prompts"])
+                    prompt = random.SystemRandom().choice(topic["prompts"])
                     reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
 
                     reply = reply[:reply.rfind('.') + 1]
+                    if reply.count('.') > 2:
+                        for _ in range(random.SystemRandom().randint(0, reply.count('.')-2)):
+                            reply = reply[:reply.rfind('.') + 1]
 
                     if len(reply) < 20:
+                        logging.info("Too short.")
                         continue
 
                     if topic["include_first_sentance"] == True:
@@ -110,17 +113,20 @@ def main(mytimer: func.TimerRequest) -> None:
 
                         if topic == other_topics[0] and trend and trend[0] == '#':
                             reply = reply + f" {trend}"
-                    
+                        
                         logging.info("Posting. ")
                         api.update_status(
                             f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                         )
                         logging.info("Posted. ")
                         return
+                    else:
+                        logging.info("Bad characters.")
                 except:
+                    logging.info("Exception.")
                     continue
 
-        topic = random.choice(other_topics)
+        topic = random.SystemRandom().choice(other_topics)
         if topic == other_topics[0]:  #TRENDING
             trend = get_random_trend(api)
             topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'

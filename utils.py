@@ -9,13 +9,6 @@ import random
 from profanity_check import predict
 from datetime import datetime, timedelta
 
-def set_random_seed():
-    t = int( time.time() * 1000.0 )
-    random.seed( ((t & 0xff000000) >> 24) +
-                ((t & 0x00ff0000) >>  8) +
-                ((t & 0x0000ff00) <<  8) +
-                ((t & 0x000000ff) << 24)   )
-
 def clean(text):
     cleanr = re.compile('@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+')
     cleantext = re.sub(cleanr, '', text).strip().replace('\n', ' ').replace('"', '')
@@ -118,7 +111,7 @@ def is_content_offensive(content):
     if re.search(offensive, content) is not None:
         return True
 
-    if "blog" in content or "article" in content:
+    if "blog" in content or "article" in content or "dog" in content or "puppy" in content:
         return True
 
     return False

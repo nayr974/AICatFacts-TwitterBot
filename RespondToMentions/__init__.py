@@ -20,7 +20,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
             #If a reply to another tweet, only a chance we will reply again
             if tweet.in_reply_to_status_id is not None:
-                if random.randint(0, 2) == 0:
+                if random.SystemRandom().randint(0, 2) == 0:
                     continue
 
             logging.info('Replying to: ' + tweet.text)

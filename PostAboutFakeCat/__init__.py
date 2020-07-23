@@ -6,7 +6,7 @@ import tempfile
 import os.path
 
 from urllib.request import Request, urlopen
-from ..utils import clean, get_api, is_content_offensive, get_generated_response, set_random_seed
+from ..utils import clean, get_api, is_content_offensive, get_generated_response
 
 import azure.functions as func
 
@@ -18,8 +18,7 @@ prompts = [
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
-    set_random_seed()
-    prompt = random.choice(prompts)
+    prompt = random.SystemRandom().choice(prompts)
 
     generate_count = 0
 

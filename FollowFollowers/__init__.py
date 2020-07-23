@@ -10,7 +10,7 @@ def followall(api):
     follow_count = 0;
     logging.info('Following followers.')
     for follower in tweepy.Cursor(api.followers).items():
-        if follow_count >= 5:
+        if follow_count >= 1:
             break
 
         if not follower.following:

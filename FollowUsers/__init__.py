@@ -17,7 +17,7 @@ def main(mytimer: func.TimerRequest) -> None:
     follow_count = 0
 
     for tweet in tweets:
-        if follow_count >= 3:
+        if follow_count >= 1:
             break
 
         if not any(

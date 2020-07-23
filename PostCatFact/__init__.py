@@ -3,7 +3,7 @@ import re
 import random
 
 from datetime import datetime
-from ..utils import clean, get_api, get_generated_catfact, set_random_seed
+from ..utils import clean, get_api, get_generated_catfact
 from .catfacts import facts
 
 import azure.functions as func
@@ -12,18 +12,17 @@ import azure.functions as func
 def get_seed_facts():
     split_facts = facts.split("\n")
     seed_facts = [
-        random.choice(split_facts),
-        random.choice(split_facts),
-        random.choice(split_facts),
-        random.choice(split_facts),
-        random.choice(split_facts)
+        random.SystemRandom().choice(split_facts),
+        random.SystemRandom().choice(split_facts),
+        random.SystemRandom().choice(split_facts),
+        random.SystemRandom().choice(split_facts),
+        random.SystemRandom().choice(split_facts)
     ]
     return "\n\n".join(seed_facts) + "\n\nHere's an interesting fact about cats."
 
 
 def main(mytimer: func.TimerRequest) -> None:  
-    set_random_seed()
-
+    
     generate_count = 0
 
     def generate_fact():
