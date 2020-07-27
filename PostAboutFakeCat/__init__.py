@@ -41,7 +41,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if regex.search(reply) is not None and not is_content_offensive(reply):
             return get_catinfo()
 
-        return f"{prompt} {reply} #catsoftwitter #caturday"
+        return f"{prompt} {reply} #ai #catsoftwitter #caturday"
 
     info = get_catinfo()
 

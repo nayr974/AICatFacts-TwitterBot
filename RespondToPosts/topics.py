@@ -6,10 +6,15 @@ cat_fact = {
         'prompts': [
             "My algorithms have determined that this fact is",
             "While interesting, my algorithms indicate this fact is",
-            "My algorithms agree, this fact is", "My algorithms disagree, this fact is",
+            "My algorithms agree, this fact is", 
+            "My algorithms disagree, this fact is",
             "My algorithms just reminded me that this fact is",
             "Very interesting, my algorithms show that this fact is"
-            "By running this through my algorithms I have determined"
+            "By running this through my algorithms I have determined",
+            "I have determined this fact to",
+            "I have that this fact is",
+            "I'll add this to my database for analysis so",
+            "My advanced AI thinks that"
         ],
         "include_first_sentance":
         True,
