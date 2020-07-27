@@ -9,12 +9,16 @@ cat_fact = {
             "My algorithms agree, this fact is", 
             "My algorithms disagree, this fact is",
             "My algorithms just reminded me that this fact is",
+            "I wonder if this is why cats",
+            "This is actually why cats",
+            "This explains why cats",
             "Very interesting, my algorithms show that this fact is"
             "By running this through my algorithms I have determined",
-            "I have determined this fact to",
-            "I have that this fact is",
+            "I have determined this fact to be",
+            "I think that this fact is",
             "I'll add this to my database for analysis so",
-            "My advanced AI thinks that"
+            "My advanced AI thinks that",
+            "You've confused my advanced AI. This fact"
         ],
         "include_first_sentance":
         True,
