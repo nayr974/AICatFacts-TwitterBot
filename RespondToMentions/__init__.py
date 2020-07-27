@@ -39,7 +39,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
                     prompt = f'I am a machine learned artificial intelligence that talks about cats a lot. You said, "{cleantext}" Being a cat, I said "'
 
-                    reply = get_generated_response(f"\"{cleantext}\". {prompt}", 160)
+                    reply = get_generated_response(prompt, 160)
                     reply = reply[:reply.find('"')]
                     reply = clean(reply)
                     reply = reply[:reply.find('.')]
