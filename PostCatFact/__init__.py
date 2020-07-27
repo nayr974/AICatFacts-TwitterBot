@@ -20,9 +20,9 @@ def get_seed_facts():
     ]
     return "\n\n".join(seed_facts) + "\n\nHere's an interesting fact about cats."
 
-
+#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:  
-    
+
     generate_count = 0
 
     def generate_fact():
@@ -39,11 +39,11 @@ def main(mytimer: func.TimerRequest) -> None:
         fact = clean(fact)
         logging.info(fact)
 
-        unwanted_chars = re.compile('[@_#$%^&*<>/\|}{~:-]()')
+        unwanted_chars = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
 
         return fact if fact.find(".") is not None and unwanted_chars.search(fact) == None and not any(
             x in fact.lower() for x in [
-                " dog ", " rat ", " mouse ", "bitch"
+                " dog ", " dogs ", " rat ", " rats ", " mouse ", " bitch ", " bitches ", " mice ", " shark ", " sharks "
             ]) and any(
             x in fact.lower() for x in [
                 "cat ", "cats ", "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty", "feline", "lion", "tiger",

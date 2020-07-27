@@ -37,7 +37,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if len(reply) < 20:
             return get_catinfo()
 
-        regex = re.compile('[@_#$%^&*()<>/\|}{~:]')
+        regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
         if regex.search(reply) is not None and not is_content_offensive(reply):
             return get_catinfo()
 

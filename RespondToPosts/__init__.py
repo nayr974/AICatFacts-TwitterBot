@@ -107,7 +107,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     logging.info(reply)
 
                     #look for garbage
-                    regex = re.compile('[@_#$%^&*()<>/\|}{~:]')
+                    regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
                     if regex.search(reply) == None and not is_content_offensive(reply):
                         logging.info("Good reply. Posting. ")
 

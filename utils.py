@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 def clean(text):
     cleanr = re.compile('@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+')
-    cleantext = re.sub(cleanr, '', text).strip().replace('\n', ' ').replace('"', '')
+    cleantext = re.sub(cleanr, ' ', text).strip().replace('\n', ' ').replace('"', ' ')
     cleantext = re.sub('\s{2,}', ' ', cleantext)
     return cleantext.replace(' ,', ',').replace('.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
         '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',').replace('...', '.').replace('..', '.')
@@ -64,10 +64,10 @@ def get_generated_catfact(text):
         'prompt': {
             'text': text
         },
-        'length': 300,
+        'length': 240,
         'forceNoEnd': False,
-        'topP': 0.80,
-        'temperature': 1.45
+        'topP': 0.8,
+        'temperature': 1.2
     }
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}

@@ -20,7 +20,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
             #If a reply to another tweet, only a chance we will reply again
             if tweet.in_reply_to_status_id is not None:
-                if random.SystemRandom().randint(0, 2) == 0:
+                if random.SystemRandom().randint(0, 1) == 0:
                     continue
 
             logging.info('Replying to: ' + tweet.text)
@@ -42,6 +42,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     reply = get_generated_response(f"\"{cleantext}\". {prompt}", 160)
                     reply = reply[:reply.find('"')]
                     reply = clean(reply)
+                    reply = reply[:reply.find('.')]
 
                     if len(reply) < 8:
                         return get_reply(cleantext)
@@ -49,7 +50,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     if reply == cleantext:
                         return get_reply(cleantext)
 
-                    regex = re.compile('[@_#$%^&*()<>/\|}{~:]')
+                    regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
                     if regex.search(reply) is not None and not is_content_offensive(reply):
                         return get_reply(cleantext)
 
@@ -57,7 +58,14 @@ def main(mytimer: func.TimerRequest) -> None:
 
                 reply = get_reply(cleantext)
                 logging.info("Posting reply.")
-                api.update_status(
-                    f"@{tweet.user.screen_name} {reply}",
-                    in_reply_to_status_id=tweet.id,
-                    auto_populate_reply_metadata=True)
+                    
+                #If not a reply to another tweet, retweet with comment otherwise reply
+                if tweet.in_reply_to_status_id is None:
+                    api.update_status(
+                        f"@{tweet.user.screen_name} {reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+                    )
+                else:
+                    api.update_status(
+                        f"@{tweet.user.screen_name} {reply}",
+                        in_reply_to_status_id=tweet.id,
+                        auto_populate_reply_metadata=True)
