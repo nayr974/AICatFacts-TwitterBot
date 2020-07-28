@@ -1,9 +1,10 @@
 import logging
 import re
 import random
+import tempfile
 
 from datetime import datetime
-from ..utils import clean, get_api, get_generated_catfact
+from ..utils import clean, get_api, get_generated_catfact, upload_cat_image
 from .catfacts import facts
 
 import azure.functions as func
@@ -58,4 +59,5 @@ def main(mytimer: func.TimerRequest) -> None:
 
 def tweet(fact):
     api = get_api()
-    api.update_status(status=fact)
+    media_object = upload_cat_image()
+    api.update_status(status=fact, media_ids=[media_object.media_id])

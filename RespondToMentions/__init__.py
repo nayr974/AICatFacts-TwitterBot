@@ -11,7 +11,7 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     logging.info("Getting mentions")
-    mentions = api.mentions_timeline(count=20)
+    mentions = api.mentions_timeline(count=20, tweet_mode='extended')
 
     for tweet in mentions:
         recent_tweet = tweet.created_at > (
@@ -23,8 +23,8 @@ def main(mytimer: func.TimerRequest) -> None:
                 if random.SystemRandom().randint(0, 1) == 0:
                     continue
 
-            logging.info('Replying to: ' + tweet.text)
-            cleantext = clean(tweet.text)
+            logging.info('Replying to: ' + tweet.full_text)
+            cleantext = clean(tweet.full_text)
             if not is_content_offensive(cleantext):
                 logging.info("Good mention. Getting reply.")
 

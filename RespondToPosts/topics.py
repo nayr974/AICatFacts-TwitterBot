@@ -1,7 +1,7 @@
 cat_fact = {
         'search_term':
-        '"cat fact" OR #catfacts filter:safe -filter:retweets -from:aicatfacts',
-        'include_terms': ["cat fact", "#catfacts"],
+        '"cat fact" OR "fact about cats" OR #catfacts filter:safe -filter:retweets -from:aicatfacts',
+        'include_terms': ["cat fact", "#catfacts", "fact about cats"],
         'include_term': "",
         'prompts': [
             "My algorithms have determined that this fact is",

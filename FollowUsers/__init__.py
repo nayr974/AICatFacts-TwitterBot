@@ -12,7 +12,8 @@ def main(mytimer: func.TimerRequest) -> None:
     tweets = api.search(
         q=f'"#catsoftwitter" OR "machine learning" OR "artificial intelligence" filter:safe -filter:links -filter:retweets ',
         count=50,
-        locale='en')
+        locale='en', 
+        tweet_mode='extended')
 
     follow_count = 0
 
@@ -21,7 +22,7 @@ def main(mytimer: func.TimerRequest) -> None:
             break
 
         if not any(
-            x in tweet.text.lower() for x in [
+            x in tweet.full_text.lower() for x in [
                 "#catsoftwitter ", "machine learning ", "artificial intelligence"
             ]):
             continue

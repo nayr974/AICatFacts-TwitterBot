@@ -1,6 +1,9 @@
 import logging
 import time
+import io
 import os
+import os.path
+import tempfile
 import re
 import requests
 import json
@@ -8,6 +11,7 @@ import tweepy
 import random
 from profanity_check import predict
 from datetime import datetime, timedelta
+from urllib.request import Request, urlopen
 
 def clean(text):
     cleanr = re.compile('@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+')
@@ -103,6 +107,23 @@ def get_api():
         wait_on_rate_limit=True,
         wait_on_rate_limit_notify=True)
 
+def upload_cat_image():
+    cat_api_key = os.environ['CAT_API_KEY']
+    cat_api_url = f'https://api.thecatapi.com/v1/images/search'
+    responsejson = requests.get(cat_api_url, headers={'x-api-key': cat_api_key, 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0'}).json()
+    cat_image_url = responsejson[0]["url"]
+    
+    with tempfile.TemporaryDirectory() as td:
+        file_name = os.path.join(td, "cat.jpg")
+        cat_image_request = Request(cat_image_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urlopen(cat_image_request) as url:
+            data = url.read()
+            image = io.BytesIO(data)
+            with open(file_name, 'wb') as out:
+                out.write(image.read())
+                api = get_api()
+                media_object = api.media_upload(file_name)
+                return media_object
 
 def is_content_offensive(content):
     if predict([content])[0] == 1:

@@ -26,7 +26,7 @@ def get_random_trend(api):
 def get_tweets(api, topic):
     logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
     return api.search(
-        q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en')
+        q=topic["search_term"], result_type=topic["result_type"], count=50, lang='en', tweet_mode='extended')
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
@@ -61,6 +61,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if len(tweets) > 0:
             return tweets
         else:
+            logging.info("None found. New topic.")
             topic = random.SystemRandom().choice(other_topics)
             return get_topic_tweets(api)
 
@@ -77,54 +78,69 @@ def main(mytimer: func.TimerRequest) -> None:
 
         tweets = get_topic_tweets(api)
         for tweet in tweets:
-            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=7))
-            cleantext = clean(tweet.text)
+            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=5))
+            if not recent_tweet:
+                continue
+            
+            if topic == cat_fact and not any(x in tweet.full_text.lower() for x in topic["include_terms"]):
+                logging.info("Missing include terms for cat fact.")
+                logging.info(tweet.full_text.lower())
+                continue
 
-            if recent_tweet and not is_content_offensive(cleantext) and len(cleantext) > 50:
-                if topic == cat_fact and not any(x in cleantext.lower() for x in topic["include_terms"]):
+            cleantext = clean(tweet.full_text)
+
+            if is_content_offensive(cleantext):
+                logging.info("Offensive content.")
+                continue
+            if len(cleantext) < 50:
+                logging.info("Too short.")
+                continue
+            if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
+                logging.info("Missing include terms.")
+                continue
+
+            try:
+                logging.info("Good tweet. Getting reply.")
+                prompt = random.SystemRandom().choice(topic["prompts"])
+                reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
+
+                reply = reply[:reply.rfind('.') + 1]
+                if reply.count('.') > 2:
+                    for _ in range(random.SystemRandom().randint(0, reply.count('.')-2)):
+                        reply = reply[:reply.rfind('.') + 1]
+
+                if len(reply) < 20:
+                    logging.info("Too short.")
                     continue
-                if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
-                    continue
-                try:
-                    logging.info("Good tweet. Getting reply.")
-                    prompt = random.SystemRandom().choice(topic["prompts"])
-                    reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
 
-                    reply = reply[:reply.rfind('.') + 1]
-                    if reply.count('.') > 2:
-                        for _ in range(random.SystemRandom().randint(0, reply.count('.')-2)):
-                            reply = reply[:reply.rfind('.') + 1]
+                if topic["include_first_sentance"] == True:
+                    reply = f"{prompt} {reply}"
 
-                    if len(reply) < 20:
-                        logging.info("Too short.")
-                        continue
+                reply = clean(reply)
 
-                    if topic["include_first_sentance"] == True:
-                        reply = f"{prompt} {reply}"
+                logging.info(reply)
 
-                    reply = clean(reply)
+                #look for garbage
+                regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
+                if regex.search(reply) == None and not is_content_offensive(reply):
+                    logging.info("Good reply. Posting. ")
 
-                    logging.info(reply)
+                    if topic == other_topics[0] and trend and trend[0] == '#':
+                        reply = reply + f" {trend}"
+                     
+                    logging.info("Posting. ")
+                    api.update_status(
+                        f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+                    )
+                    logging.info("Posted. ")
+                    return
+                else:
+                    logging.info("Bad characters.")
+            except:
+                logging.info("Exception.")
+                continue
 
-                    #look for garbage
-                    regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-                    if regex.search(reply) == None and not is_content_offensive(reply):
-                        logging.info("Good reply. Posting. ")
-
-                        if topic == other_topics[0] and trend and trend[0] == '#':
-                            reply = reply + f" {trend}"
-                        
-                        logging.info("Posting. ")
-                        api.update_status(
-                            f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-                        )
-                        logging.info("Posted. ")
-                        return
-                    else:
-                        logging.info("Bad characters.")
-                except:
-                    logging.info("Exception.")
-                    continue
+        logging.info("Tweets found, but none acceptable. New topic.")
 
         topic = random.SystemRandom().choice(other_topics)
         if topic == other_topics[0]:  #TRENDING

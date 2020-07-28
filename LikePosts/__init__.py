@@ -15,9 +15,10 @@ def main(mytimer: func.TimerRequest) -> None:
         f'"artificial intelligence" OR "cute cat" OR "adorable cat" OR "machine learning" OR "cat fact" OR "#catsoftwitter" filter:safe -filter:links -filter:retweets',
         lang='en', 
         result_type="recent",
-        count=2)
+        count=2, 
+        tweet_mode='extended')
     for tweet in tweets:
-        if tweet.favorited == False and not is_content_offensive(tweet.text):
+        if tweet.favorited == False and not is_content_offensive(tweet.full_text):
             try:
                 logging.info("Fav!")
                 api.create_favorite(tweet.id)
