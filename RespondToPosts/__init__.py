@@ -55,6 +55,10 @@ def main(mytimer: func.TimerRequest) -> None:
                 trend = get_random_trend(api)
                 topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
                 topic["include_term"] = trend   
+                if topic == other_topics[0] and trend and trend[0] == '#':
+                    topic["hashtag"] = trend
+                else:
+                    topic["hashtag"] = ""
 
             tweets = get_tweets(api, topic)
 
@@ -124,13 +128,11 @@ def main(mytimer: func.TimerRequest) -> None:
                 regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
                 if regex.search(reply) == None and not is_content_offensive(reply):
                     logging.info("Good reply. Posting. ")
-
-                    if topic == other_topics[0] and trend and trend[0] == '#':
-                        reply = reply + f" {trend}"
                      
                     logging.info("Posting. ")
+                    hashtag = topic["hashtag"]
                     api.update_status(
-                        f"{reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+                        f"{reply} {hashtag} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                     )
                     logging.info("Posted. ")
                     return
@@ -146,7 +148,11 @@ def main(mytimer: func.TimerRequest) -> None:
         if topic == other_topics[0]:  #TRENDING
             trend = get_random_trend(api)
             topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'
-            topic["include_term"] = trend   
+            topic["include_term"] = trend
+            if topic == other_topics[0] and trend and trend[0] == '#':
+                topic["hashtag"] = trend
+            else:
+                topic["hashtag"] = ""
 
         return tweet_reply(api)
 

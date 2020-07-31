@@ -23,7 +23,8 @@ cat_fact = {
         "include_first_sentance":
         True,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag": "#ai #catfacts"
     }
 
 other_topics = [
@@ -41,7 +42,8 @@ other_topics = [
         "include_first_sentance":
         True,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag":""
     },
     {
         'search_term':
@@ -58,7 +60,8 @@ other_topics = [
         "include_first_sentance":
         True,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag":"#machinelearning"
     },
     {
         'search_term':
@@ -73,7 +76,8 @@ other_topics = [
         "include_first_sentance":
         False,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag":"#machinelearning"
     },
     {
         'search_term':
@@ -88,7 +92,8 @@ other_topics = [
         "include_first_sentance":
         False,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag":"#cats"
     },
     {
         'search_term':
@@ -104,7 +109,8 @@ other_topics = [
         "include_first_sentance":
         False,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag":"#cats"
     },
     {
         'search_term':
@@ -120,6 +126,7 @@ other_topics = [
         "include_first_sentance":
         False,
         "result_type":
-        "recent"
+        "recent",
+        "hashtag":"#artificialintelligence"
     }
 ]
