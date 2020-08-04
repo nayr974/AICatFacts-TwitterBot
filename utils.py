@@ -9,7 +9,6 @@ import requests
 import json
 import tweepy
 import random
-import language_check
 from profanity_check import predict
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
@@ -26,7 +25,6 @@ def capitalize(text, delimiter):
         sentance.capitalize()
     return delimiter.join(split_text)
 
-
 def clean(text):
     cleantext = text.replace('\n', '').replace(';','')
     cleantext = re.sub(r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})', empty_string, cleantext, flags=re.IGNORECASE)
@@ -41,10 +39,6 @@ def clean(text):
     cleantext = capitalize(cleantext, '.')
     cleantext = capitalize(cleantext, '!')
     cleantext = capitalize(cleantext, '?')
-    
-    language_check_tool = language_check.LanguageTool('en-US')
-    matches = language_check_tool.check(cleantext)
-    cleantext = language_check.correct(cleantext, matches)
 
     return cleantext
         

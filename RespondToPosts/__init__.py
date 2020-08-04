@@ -31,7 +31,7 @@ def get_tweets(api, topic):
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
 
-    if random.SystemRandom().randint(0, 2) == 0:
+    if random.SystemRandom().randint(0, 6) == 0:
         logging.info("Doesn't feel right to post.")
         return
 
@@ -80,7 +80,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         tweets = get_topic_tweets(api)
         for tweet in tweets:
-            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=1))
+            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(minutes=15))
             if not recent_tweet:
                 continue
             

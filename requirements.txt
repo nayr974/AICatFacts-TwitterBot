@@ -1,5 +1,4 @@
 azure-functions
 tweepy
 profanity-check
-language-check
 scikit-learn==0.20.3
