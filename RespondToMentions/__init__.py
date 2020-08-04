@@ -6,6 +6,7 @@ from ..utils import clean, get_api, is_content_offensive, get_generated_response
 
 import azure.functions as func
 
+
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
@@ -13,8 +14,8 @@ def main(mytimer: func.TimerRequest) -> None:
     mentions = api.mentions_timeline(count=20, tweet_mode='extended')
 
     for tweet in mentions:
-        recent_tweet = tweet.created_at > (
-            datetime.datetime.utcnow() - datetime.timedelta(minutes=10))
+        recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
+                                           datetime.timedelta(minutes=10))
         if recent_tweet:
 
             #If a reply to another tweet, only a chance we will reply again
@@ -40,7 +41,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     try:
                         reply = get_generated_response(prompt, 200)
                         logging.info(reply)
-                        reply = reply[:reply.find('"')+1] + '.'
+                        reply = reply[:reply.find('"') + 1] + '.'
                         reply = clean(reply)
                         logging.info(reply)
 
@@ -67,7 +68,6 @@ def main(mytimer: func.TimerRequest) -> None:
                         f"@{tweet.user.screen_name} {reply} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                     )
                 else:
-                    api.update_status(
-                        f"@{tweet.user.screen_name} {reply}",
-                        in_reply_to_status_id=tweet.id,
-                        auto_populate_reply_metadata=True)
+                    api.update_status(f"@{tweet.user.screen_name} {reply}",
+                                      in_reply_to_status_id=tweet.id,
+                                      auto_populate_reply_metadata=True)

@@ -13,27 +13,41 @@ from profanity_check import predict
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
 
+
 def empty_string(match):
     return ''
+
 
 def single_space(match):
     return ' '
 
+
 def capitalize(text, delimiter):
     split_text = text.split(delimiter)
-    for sentance in split_text: 
+    for sentance in split_text:
         sentance.capitalize()
     return delimiter.join(split_text)
 
+
 def clean(text):
-    cleantext = text.replace('\n', '').replace(';','')
-    cleantext = re.sub(r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})', empty_string, cleantext, flags=re.IGNORECASE)
-    cleantext = re.sub(r'@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+', empty_string, cleantext, flags=re.IGNORECASE)
-    cleantext = cleantext.replace('(',' ').replace(')','. ').replace('"', '').replace(',.', '.').replace(' ,', ',').replace(',  ', ', ').replace(
-        ' .', '.').replace('.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace('!', '! ').replace(
-        '!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',').replace('...', '.').replace(
-        '..', '.').replace(' .', '.').replace(' s ', 's ').replace('. and', ', and').replace('?.', '?').replace('!.', '!').replace(
-        '? !', '?!').replace('! ?', '!?') 
+    cleantext = text.replace('\n', '').replace(';', '')
+    cleantext = re.sub(
+        r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})',
+        empty_string,
+        cleantext,
+        flags=re.IGNORECASE)
+    cleantext = re.sub(r'@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+',
+                       empty_string,
+                       cleantext,
+                       flags=re.IGNORECASE)
+    cleantext = cleantext.replace('(', ' ').replace(')', '. ').replace('"', '').replace(
+        ',.',
+        '.').replace(' ,', ',').replace(',  ', ', ').replace(' .', '.').replace('.', '. ').replace(
+            '.  ', '. ').replace(' .', '.').replace(' !', '!').replace('!', '! ').replace(
+                '!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(
+                    ',,', ',').replace('...', '.').replace('..', '.').replace(' .', '.').replace(
+                        ' s ', 's ').replace('. and', ', and').replace('?.', '?').replace(
+                            '!.', '!').replace('? !', '?!').replace('! ?', '!?').replace(' ,', ',')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
     cleantext = cleantext.strip()
     cleantext = capitalize(cleantext, '.')
@@ -41,7 +55,8 @@ def clean(text):
     cleantext = capitalize(cleantext, '?')
 
     return cleantext
-        
+
+
 def deploy_catfact_model():
     endpoint = os.environ['DEPLOY_URL']
     login_json = {
@@ -54,7 +69,7 @@ def deploy_catfact_model():
         "query":
         "mutation LogInByPassword($email: String!, $password: String!) {\n  logIn(input: {email: $email, credentials: {password: $password}})\n}\n"
     }
-    undeploy_at = datetime.utcnow() + timedelta(minutes=30)
+    undeploy_at = datetime.utcnow() + timedelta(minutes=10)
     deploy_json = {
         "operationName":
         "DeployModel",
@@ -103,13 +118,7 @@ def get_generated_catfact(text):
 
 def get_generated_response(text, length):
     endpoint = os.environ['GENERATE_REPLY_URL']
-    json = {
-        'prompt': {
-            'text': text, 
-            'isContinuation': True
-            }, 
-        'length': length
-    }
+    json = {'prompt': {'text': text, 'isContinuation': True}, 'length': length}
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}
     responsejson = requests.post(endpoint, json=json, headers=headers).json()
@@ -128,19 +137,26 @@ def get_api():
 
     # authentication of access token and secret
     auth.set_access_token(access_token, access_token_secret)
-    return tweepy.API(
-        auth_handler=auth,
-        retry_count=3,
-        timeout=20,
-        wait_on_rate_limit=True,
-        wait_on_rate_limit_notify=True)
+    return tweepy.API(auth_handler=auth,
+                      retry_count=3,
+                      timeout=20,
+                      wait_on_rate_limit=True,
+                      wait_on_rate_limit_notify=True)
+
 
 def upload_cat_image():
     cat_api_key = os.environ['CAT_API_KEY']
     cat_api_url = f'https://api.thecatapi.com/v1/images/search'
-    responsejson = requests.get(cat_api_url, headers={'x-api-key': cat_api_key, 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0'}).json()
+    responsejson = requests.get(
+        cat_api_url,
+        headers={
+            'x-api-key':
+            cat_api_key,
+            'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0'
+        }).json()
     cat_image_url = responsejson[0]["url"]
-    
+
     with tempfile.TemporaryDirectory() as td:
         file_name = os.path.join(td, "cat.jpg")
         cat_image_request = Request(cat_image_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -153,6 +169,7 @@ def upload_cat_image():
                 media_object = api.media_upload(file_name)
                 return media_object
 
+
 def is_content_offensive(content):
     if predict([content])[0] == 1:
         return True
@@ -161,9 +178,8 @@ def is_content_offensive(content):
         return True
 
     #other unwanted words or phrases
-    if any(x in content.lower() for x in [
-        "blog", "click here", "raw data", "article", "dog", "puppy", "www"
-        ]):
+    if any(x in content.lower()
+           for x in ["blog", "click here", "raw data", "article", "dog", "puppy", "www", "kill"]):
         return True
 
     return False
