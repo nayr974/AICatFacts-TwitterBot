@@ -80,7 +80,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         tweets = get_topic_tweets(api)
         for tweet in tweets:
-            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=5))
+            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() - datetime.timedelta(hours=1))
             if not recent_tweet:
                 continue
             
