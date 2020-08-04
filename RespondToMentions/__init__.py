@@ -6,7 +6,6 @@ from ..utils import clean, get_api, is_content_offensive, get_generated_response
 
 import azure.functions as func
 
-
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
@@ -15,7 +14,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
     for tweet in mentions:
         recent_tweet = tweet.created_at > (
-            datetime.datetime.utcnow() - datetime.timedelta(minutes=30))
+            datetime.datetime.utcnow() - datetime.timedelta(minutes=10))
         if recent_tweet:
 
             #If a reply to another tweet, only a chance we will reply again
@@ -23,10 +22,9 @@ def main(mytimer: func.TimerRequest) -> None:
                 if random.SystemRandom().randint(0, 1) == 0:
                     continue
 
-            logging.info('Replying to: ' + tweet.full_text)
             cleantext = clean(tweet.full_text)
             if not is_content_offensive(cleantext):
-                logging.info("Good mention. Getting reply.")
+                logging.info('Good mention. Replying to: ' + cleantext)
 
                 generate_count = 0
 
@@ -37,28 +35,32 @@ def main(mytimer: func.TimerRequest) -> None:
                     if generate_count > 20:
                         raise Exception('generation limit hit')
 
-                    prompt = f'I am a machine learned artificial intelligence that talks about cats a lot. You said, "{cleantext}" Being a cat, I said "'
+                    prompt = f'I am a machine learned artificial intelligence that talks about cats a lot. You said "{cleantext}". "Meow", being a cute cat robot my algorithm replied, "'
 
-                    reply = get_generated_response(prompt, 160)
-                    reply = reply[:reply.find('"')]
-                    reply = clean(reply)
-                    reply = reply[:reply.find('.')]
+                    try:
+                        reply = get_generated_response(prompt, 200)
+                        logging.info(reply)
+                        reply = reply[:reply.find('"')+1] + '.'
+                        reply = clean(reply)
+                        logging.info(reply)
 
-                    if len(reply) < 8:
+                        if len(reply) < 8:
+                            return get_reply(cleantext)
+
+                        if reply == cleantext:
+                            return get_reply(cleantext)
+
+                        regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
+                        if regex.search(reply) is not None and not is_content_offensive(reply):
+                            return get_reply(cleantext)
+
+                        return reply
+                    except:
                         return get_reply(cleantext)
-
-                    if reply == cleantext:
-                        return get_reply(cleantext)
-
-                    regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-                    if regex.search(reply) is not None and not is_content_offensive(reply):
-                        return get_reply(cleantext)
-
-                    return reply
 
                 reply = get_reply(cleantext)
                 logging.info("Posting reply.")
-                    
+
                 #If not a reply to another tweet, retweet with comment otherwise reply
                 if tweet.in_reply_to_status_id is None:
                     api.update_status(

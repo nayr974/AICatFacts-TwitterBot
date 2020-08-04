@@ -9,16 +9,44 @@ import requests
 import json
 import tweepy
 import random
+import language_check
 from profanity_check import predict
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
 
+def empty_string(match):
+    return ''
+
+def single_space(match):
+    return ' '
+
+def capitalize(text, delimiter):
+    split_text = text.split(delimiter)
+    for sentance in split_text: 
+        sentance.capitalize()
+    return delimiter.join(split_text)
+
+
 def clean(text):
-    cleanr = re.compile('@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+')
-    cleantext = re.sub(cleanr, ' ', text).strip().replace('\n', ' ').replace('"', ' ')
-    cleantext = re.sub('\s{2,}', ' ', cleantext)
-    return cleantext.replace(' ,', ',').replace('.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
-        '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',').replace('...', '.').replace('..', '.')
+    cleantext = text.replace('\n', '').replace(';','')
+    cleantext = re.sub(r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})', empty_string, cleantext, flags=re.IGNORECASE)
+    cleantext = re.sub(r'@\w*|#\w*|<.*?>|\[.*?\]|[^\x00-\x7F]+', empty_string, cleantext, flags=re.IGNORECASE)
+    cleantext = cleantext.replace('(',' ').replace(')','. ').replace('"', '').replace(',.', '.').replace(' ,', ',').replace(',  ', ', ').replace(
+        ' .', '.').replace('.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace('!', '! ').replace(
+        '!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(',,', ',').replace('...', '.').replace(
+        '..', '.').replace(' .', '.').replace(' s ', 's ').replace('. and', ', and').replace('?.', '?').replace('!.', '!').replace(
+        '? !', '?!').replace('! ?', '!?') 
+    cleantext = re.sub('\s{2,}', single_space, cleantext)
+    cleantext = cleantext.strip()
+    cleantext = capitalize(cleantext, '.')
+    cleantext = capitalize(cleantext, '!')
+    cleantext = capitalize(cleantext, '?')
+    
+    language_check_tool = language_check.LanguageTool('en-US')
+    matches = language_check_tool.check(cleantext)
+    cleantext = language_check.correct(cleantext, matches)
+
+    return cleantext
         
 def deploy_catfact_model():
     endpoint = os.environ['DEPLOY_URL']
@@ -81,7 +109,13 @@ def get_generated_catfact(text):
 
 def get_generated_response(text, length):
     endpoint = os.environ['GENERATE_REPLY_URL']
-    json = {'prompt': {'text': text, 'isContinuation': True}, 'length': length}
+    json = {
+        'prompt': {
+            'text': text, 
+            'isContinuation': True
+            }, 
+        'length': length
+    }
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}
     responsejson = requests.post(endpoint, json=json, headers=headers).json()
@@ -132,7 +166,10 @@ def is_content_offensive(content):
     if re.search(offensive, content) is not None:
         return True
 
-    if "blog" in content or "article" in content or "dog" in content or "puppy" in content:
+    #other unwanted words or phrases
+    if any(x in content.lower() for x in [
+        "blog", "click here", "raw data", "article", "dog", "puppy", "www"
+        ]):
         return True
 
     return False

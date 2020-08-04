@@ -1,6 +1,6 @@
 cat_fact = {
         'search_term':
-        '"cat fact" OR "fact about cats" OR #catfacts filter:safe -filter:retweets -from:aicatfacts',
+        '"cat fact" OR "fact about cats" OR #catfacts filter:safe -filter:retweets -from:aicatfacts -from:fairydustsvcs',
         'include_terms': ["cat fact", "#catfacts", "fact about cats"],
         'include_term': "",
         'prompts': [

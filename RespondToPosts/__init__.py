@@ -31,10 +31,8 @@ def get_tweets(api, topic):
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
 
-    # Azure cron timers don't seem to allow schedules that go overnight (15-4), or have multiple timer triggers (15-24, 0-4)
-    # so a code based check is used here instead.
-    if datetime.datetime.utcnow().hour > 4 and datetime.datetime.utcnow().hour < 15:
-        logging.info("Outside of run time range")
+    if random.SystemRandom().randint(0, 2) == 0:
+        logging.info("Doesn't feel right to post.")
         return
 
     api = get_api()
