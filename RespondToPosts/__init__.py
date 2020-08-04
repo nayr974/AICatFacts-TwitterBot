@@ -125,14 +125,17 @@ def main(mytimer: func.TimerRequest) -> None:
                 #look for garbage
                 regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
                 if regex.search(reply) == None and not is_content_offensive(reply):
-                    logging.info("Good reply. Posting. ")
+                    logging.info("Good reply. Posting.")
                      
-                    logging.info("Posting. ")
+                    logging.info("Posting.")
                     hashtag = topic["hashtag"]
                     api.update_status(
                         f"{reply} {hashtag} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
                     )
-                    logging.info("Posted. ")
+                    logging.info("Posted.")
+                    logging.info("Liking tweet")
+                    api.create_favorite(tweet.id)
+                    logging.info("Liked.")
                     return
                 else:
                     logging.info("Bad characters.")
