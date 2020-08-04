@@ -23,7 +23,7 @@ prompts = [
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
 
-    if random.SystemRandom().randint(0, 100) == 0:
+    if random.SystemRandom().randint(0, 100) != 0:
         logging.info("Doesn't feel right to post.")
         return
 
