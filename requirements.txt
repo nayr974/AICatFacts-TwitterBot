@@ -2,3 +2,5 @@ azure-functions
 tweepy
 profanity-check
 scikit-learn==0.20.3
+quantumrand
+better-profanity

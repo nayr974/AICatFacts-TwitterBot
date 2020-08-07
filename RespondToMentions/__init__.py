@@ -1,12 +1,12 @@
 import logging
 import re
-import random
 import datetime
-from ..utils import clean, get_api, is_content_offensive, get_generated_response
+from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
 
 import azure.functions as func
 
 
+#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
@@ -15,12 +15,11 @@ def main(mytimer: func.TimerRequest) -> None:
 
     for tweet in mentions:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
-                                           datetime.timedelta(minutes=10))
+                                           datetime.timedelta(minutes=20))
         if recent_tweet:
-
             #If a reply to another tweet, only a chance we will reply again
             if tweet.in_reply_to_status_id is not None:
-                if random.SystemRandom().randint(0, 1) == 0:
+                if true_random_randint(0, 2) != 0:
                     continue
 
             cleantext = clean(tweet.full_text)
@@ -52,7 +51,7 @@ def main(mytimer: func.TimerRequest) -> None:
                             return get_reply(cleantext)
 
                         regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-                        if regex.search(reply) is not None and not is_content_offensive(reply):
+                        if regex.search(reply) is not None or is_content_offensive(reply):
                             return get_reply(cleantext)
 
                         return reply
@@ -71,3 +70,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     api.update_status(f"@{tweet.user.screen_name} {reply}",
                                       in_reply_to_status_id=tweet.id,
                                       auto_populate_reply_metadata=True)
+
+                logging.info("Liking tweet")
+                api.create_favorite(tweet.id)
+                logging.info("Liked.")

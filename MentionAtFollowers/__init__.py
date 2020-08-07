@@ -1,8 +1,7 @@
 import logging
 import re
-import random
 import datetime
-from ..utils import clean, get_api, is_content_offensive, get_generated_response
+from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
 
 import azure.functions as func
 
@@ -22,17 +21,17 @@ prompts = [
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
-
-    if random.SystemRandom().randint(0, 100) != 0:
-        logging.info("Doesn't feel right to post.")
+    number = true_random_randint(0, 75)
+    if number != 1:
+        logging.info(str(number) + " Doesn't feel right to post.")
         return
 
     api = get_api()
 
-    follower = random.SystemRandom().choice(api.followers())
+    follower = true_random_choice(api.followers())
     logging.info(f'Tweeting at: {follower.screen_name}')
 
-    prompt = random.SystemRandom().choice(prompts)
+    prompt = true_random_choice(prompts)
     generate_count = 0
 
     def get_mention(prompt):
@@ -57,7 +56,7 @@ def main(mytimer: func.TimerRequest) -> None:
                 return get_mention(prompt)
 
             regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-            if regex.search(mention) is not None and not is_content_offensive(mention):
+            if regex.search(mention) is not None or is_content_offensive(mention):
                 return get_mention(prompt)
 
             return mention

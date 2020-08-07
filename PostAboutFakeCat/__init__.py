@@ -1,24 +1,31 @@
 import logging
 import re
 import io
-import random
 import tempfile
 import os.path
 
 from urllib.request import Request, urlopen
-from ..utils import clean, get_api, is_content_offensive, get_generated_response
+from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
 
 import azure.functions as func
 
 prompts = [
     "This cat", "This cat is named", "This is a cat named", "This is a cat that",
-    "You might not believe it, but this cat", "A cat named"
+    "You might not believe it, but this cat", "My cat just did the craziest thing.",
+    "Look at this cat who", "When this cat"
 ]
 
+
 def main(mytimer: func.TimerRequest) -> None:
+
+    number = true_random_randint(0, 100)
+    if number != 1:
+        logging.info(str(number) + " Doesn't feel right to post.")
+        return
+
     api = get_api()
 
-    prompt = random.SystemRandom().choice(prompts)
+    prompt = true_random_choice(prompts)
 
     generate_count = 0
 
@@ -29,7 +36,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if generate_count > 20:
             raise Exception('generation limit hit')
 
-        reply = get_generated_response(prompt, 160)
+        reply = get_generated_response(prompt, 200)
         reply = reply[:reply.find("\n")]
         reply = reply[:reply.rfind(".") + 1]
         reply = clean(reply)
@@ -38,10 +45,10 @@ def main(mytimer: func.TimerRequest) -> None:
             return get_catinfo()
 
         regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-        if regex.search(reply) is not None and not is_content_offensive(reply):
+        if regex.search(reply) is not None or is_content_offensive(reply):
             return get_catinfo()
 
-        return f"{prompt} {reply} #ai #catsoftwitter #caturday"
+        return f"{prompt} {reply} #ai #catsoftwitter"
 
     info = get_catinfo()
 

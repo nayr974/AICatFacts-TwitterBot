@@ -1,10 +1,9 @@
 import logging
 import re
-import random
 import tempfile
 
 from datetime import datetime
-from ..utils import clean, get_api, get_generated_catfact, upload_cat_image
+from ..utils import clean, get_api, get_generated_catfact, upload_cat_image, true_random_randint, true_random_choice
 from .catfacts import facts
 
 import azure.functions as func
@@ -13,16 +12,17 @@ import azure.functions as func
 def get_seed_facts():
     split_facts = facts.split("\n")
     seed_facts = [
-        random.SystemRandom().choice(split_facts),
-        random.SystemRandom().choice(split_facts),
-        random.SystemRandom().choice(split_facts),
-        random.SystemRandom().choice(split_facts),
-        random.SystemRandom().choice(split_facts)
+        true_random_choice(split_facts),
+        true_random_choice(split_facts),
+        true_random_choice(split_facts),
+        true_random_choice(split_facts),
+        true_random_choice(split_facts)
     ]
     return "\n\n".join(seed_facts) + "\n\nHere's an interesting fact about cats."
 
+
 #def main(req: func.HttpRequest) -> func.HttpResponse:
-def main(mytimer: func.TimerRequest) -> None:  
+def main(mytimer: func.TimerRequest) -> None:
 
     generate_count = 0
 
@@ -42,13 +42,13 @@ def main(mytimer: func.TimerRequest) -> None:
 
         unwanted_chars = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
 
-        return fact if fact.find(".") is not None and unwanted_chars.search(fact) == None and not any(
-            x in fact.lower() for x in [
-                " dog ", " dogs ", " rat ", " rats ", " mouse ", " bitch ", " bitches ", " mice ", " shark ", " sharks "
-            ]) and any(
-            x in fact.lower() for x in [
-                "cat ", "cats ", "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty", "feline", "lion", "tiger",
-                "cheetah"
+        return fact if fact.find(".") is not None and unwanted_chars.search(
+            fact) == None and not any(x in fact.lower() for x in [
+                " dog ", " dogs ", " rat ", " rats ", " mouse ", " bitch ", " bitches ", " mice ",
+                " shark ", " sharks "
+            ]) and any(x in fact.lower() for x in [
+                "cat ", "cats ", "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty",
+                "feline", "lion", "tiger", "cheetah"
             ]) else generate_fact()
 
     new_fact = f"{generate_fact()} #ai #catfacts"

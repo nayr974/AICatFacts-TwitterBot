@@ -5,7 +5,7 @@
       "name": "mytimer",
       "type": "timerTrigger",
       "direction": "in",
-      "schedule": "0 55 16,22 * * SUN-FRI"
+      "schedule": "0 55 16,19,22 * * *"
     }
   ]
 }

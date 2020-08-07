@@ -8,10 +8,27 @@ import re
 import requests
 import json
 import tweepy
-import random
+import quantumrand
 from profanity_check import predict
+from better_profanity import profanity
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
+
+
+def true_random_randint(min, max):
+    #Azure linux VM defaults to cipher that API rejects
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += 'HIGH:!DH:!aNULL'
+    try:
+        requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += 'HIGH:!DH:!aNULL'
+    except AttributeError:
+        # no pyopenssl support used / needed / available
+        pass
+
+    return quantumrand.randint(min, max)
+
+
+def true_random_choice(list):
+    return list[true_random_randint(0, len(list) - 1)]
 
 
 def empty_string(match):
@@ -47,7 +64,11 @@ def clean(text):
                 '!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(
                     ',,', ',').replace('...', '.').replace('..', '.').replace(' .', '.').replace(
                         ' s ', 's ').replace('. and', ', and').replace('?.', '?').replace(
-                            '!.', '!').replace('? !', '?!').replace('! ?', '!?').replace(' ,', ',')
+                            '!.', '!').replace('? !', '?!').replace('! ?', '!?').replace(
+                                ' ,', ',').replace(' s.', 's.').replace(' s!', 's!').replace(
+                                    ' s?', 's?').replace(' s,',
+                                                         's,').replace(', e. g.',
+                                                                       '.').replace('e. g.', '')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
     cleantext = cleantext.strip()
     cleantext = capitalize(cleantext, '.')
@@ -177,9 +198,14 @@ def is_content_offensive(content):
     if re.search(offensive, content) is not None:
         return True
 
+    if profanity.contains_profanity(content):
+        return True
+
     #other unwanted words or phrases
-    if any(x in content.lower()
-           for x in ["blog", "click here", "raw data", "article", "dog", "puppy", "www", "kill"]):
+    if any(x in content.lower() for x in [
+            "blog", "click here", "raw data", "article", "dog", "puppy", "www", "link", "kill",
+            "rape", "obama", "trump", "passed away", "died", "death", "passing of"
+    ]):
         return True
 
     return False
@@ -193,7 +219,6 @@ offensive = re.compile(
     r"shoo?t(s|ing|er)?s?|crash(es|ed|ing)?|attack(s|ers?|ing|ed)?|"
     r"murder(s|er|ed|ing)?s?|"
     r"fuck(s|ing)?|shit|cunt|bitch|ass|dick|"
-    r".*trump|.*obama|"
     r"hostages?|(gang)?rap(e|es|ed|ist|ists|ing)|assault(s|ed)?|"
     r"pile-?ups?|massacre(s|d)?|"
     r"assassinate(d|s)?|sla(y|in|yed|ys|ying|yings)|victims?|"

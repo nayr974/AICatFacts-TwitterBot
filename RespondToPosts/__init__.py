@@ -2,9 +2,8 @@ import logging
 import time
 import tweepy
 import re
-import random
 import datetime
-from ..utils import clean, get_api, is_content_offensive, get_generated_response
+from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
 from .topics import cat_fact, other_topics
 
 import azure.functions as func
@@ -15,7 +14,7 @@ def get_random_trend(api):
     trending = api.trends_place(23424977)  #USA
 
     def get_safe_trend(trending):
-        trend = random.SystemRandom().choice(trending[0]['trends'][:15])
+        trend = true_random_choice(trending[0]['trends'][:15])
         if not is_content_offensive(trend['name']):
             return trend['name']
         else:
@@ -36,8 +35,9 @@ def get_tweets(api, topic):
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
 
-    if random.SystemRandom().randint(0, 6) != 0:
-        logging.info("Doesn't feel right to post.")
+    number = true_random_randint(0, 15)
+    if number != 1:
+        logging.info(str(number) + " Doesn't feel right to post.")
         return
 
     api = get_api()
@@ -52,7 +52,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         if len(tweets) <= 0:
             logging.info("None found. New topic.")
-            topic = random.SystemRandom().choice(other_topics)
+            topic = true_random_choice(other_topics)
 
             if topic == other_topics[0]:  #TRENDING
                 trend = get_random_trend(api)
@@ -69,7 +69,7 @@ def main(mytimer: func.TimerRequest) -> None:
             return tweets
         else:
             logging.info("None found. New topic.")
-            topic = random.SystemRandom().choice(other_topics)
+            topic = true_random_choice(other_topics)
             return get_topic_tweets(api)
 
     tweet_reply_count = 0
@@ -105,17 +105,17 @@ def main(mytimer: func.TimerRequest) -> None:
                 logging.info("Too short.")
                 continue
             if topic != other_topics[0] and not topic["include_term"].lower() in cleantext.lower():
-                logging.info("Missing include terms.")
+                logging.info("Missing include terms after cleaning.")
                 continue
 
             try:
                 logging.info("Good tweet. Getting reply.")
-                prompt = random.SystemRandom().choice(topic["prompts"])
+                prompt = true_random_choice(topic["prompts"])
                 reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
 
                 reply = reply[:reply.rfind('.') + 1]
                 if reply.count('.') > 2:
-                    for _ in range(random.SystemRandom().randint(0, reply.count('.') - 2)):
+                    for _ in range(true_random_randint(0, reply.count('.') - 2)):
                         reply = reply[:reply.rfind('.') + 1]
 
                 if len(reply) < 20:
@@ -152,7 +152,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         logging.info("Tweets found, but none acceptable. New topic.")
 
-        topic = random.SystemRandom().choice(other_topics)
+        topic = true_random_choice(other_topics)
         if topic == other_topics[0]:  #TRENDING
             trend = get_random_trend(api)
             topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'

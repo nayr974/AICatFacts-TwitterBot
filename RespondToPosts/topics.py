@@ -1,7 +1,10 @@
 cat_fact = {
     'search_term':
-    '"cat fact" OR "fact about cats" OR #catfacts filter:safe -filter:retweets -from:aicatfacts -from:fairydustsvcs',
-    'include_terms': ["cat fact", "#catfacts", "fact about cats"],
+    '"cat fact" OR "fact about cats" OR "the fact that cats" OR "did you know that cats" OR "did you know cats" OR "it\'s true that cats" OR #catfacts filter:safe -filter:retweets -from:aicatfacts -from:fairydustsvcs -from:rin_engbot',
+    'include_terms': [
+        "cat fact", "#catfacts", "fact about cats", "did you know that cats", "did you know cats",
+        "the fact that cats", "it\'s true that cats"
+    ],
     'include_term':
     "",
     'prompts': [
@@ -43,22 +46,22 @@ other_topics = [{
     ""
 }, {
     'search_term':
-    '"machine learning" filter:safe -filter:links -filter:retweets ',
+    '"my cat" filter:safe -filter:retweets ',
     'include_term':
-    'machine learning',
+    'my cat',
     'prompts': [
-        "I wonder if I can apply this to my advanced AI by", "Does this mean I'm obsolete?",
-        "It's amazing how far machine learning has come. My cat-based algorithms are",
-        "Even the best machine learning today", "Some people think that machine learning is",
-        "I am very interested in how I can use this to improve my algorithm's",
-        "I think it's time that I re-wrote the part of my algorithm that"
+        "What a silly cat. Your cat is super silly. This is a super silly cat. SO SILLY. Here are the ways I think your cat is silly.",
+        "Your cat is the silliest cat I've ever seen it my life. It's SO silly. I wish I had a cat that was that silly. If I were to describe how silly your cat is, I would describe it like this.",
+        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat. I will steal your cat and be happy. Here's how.",
+        "I would like to replace your cats brain with an artifical intelligence. Your cat would be a robot. Here's what I would do.",
+        "Next your cat is going to do the following."
     ],
     "include_first_sentance":
-    True,
+    False,
     "result_type":
     "recent",
     "hashtag":
-    "#machinelearning"
+    "#cats"
 }, {
     'search_term':
     '"machine learning" filter:safe -filter:links -filter:retweets ',
@@ -77,7 +80,7 @@ other_topics = [{
     "#machinelearning"
 }, {
     'search_term':
-    '"picture of my cat" cute filter:images filter:safe -filter:retweets ',
+    '"picture of my cat" filter:images filter:safe -filter:retweets ',
     'include_term':
     'my cat',
     'prompts': [
@@ -93,9 +96,9 @@ other_topics = [{
     "#cats"
 }, {
     'search_term':
-    '#catsoftwitter cute filter:images filter:safe -filter:retweets ',
+    '#catsoftwitter filter:images filter:safe -filter:retweets ',
     'include_term':
-    'cute',
+    'cat',
     'prompts': [
         "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Here are the ways I think your cat is cute: ",
         "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
