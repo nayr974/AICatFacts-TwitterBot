@@ -10,9 +10,9 @@ from ..utils import clean, get_api, is_content_offensive, get_generated_response
 import azure.functions as func
 
 prompts = [
-    "This cat", "This cat is named", "This is a cat named", "This is a cat that",
+    "This is the coolest cat. It", "This cat is named", "This is a cat named", "This is a cat that",
     "You might not believe it, but this cat", "My cat just did the craziest thing.",
-    "Look at this cat who", "When this cat"
+    "Look at this cat that", "When this cat named", "Cats are amazing. This cat"
 ]
 
 

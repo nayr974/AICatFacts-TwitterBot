@@ -21,7 +21,7 @@ prompts = [
 
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
-    number = true_random_randint(0, 75)
+    number = true_random_randint(0, 100)
     if number != 1:
         logging.info(str(number) + " Doesn't feel right to post.")
         return
@@ -46,7 +46,7 @@ def main(mytimer: func.TimerRequest) -> None:
             mention = get_generated_response(prompt, 200)
             mention = mention[:mention.find("\n")]
             mention = mention[:mention.rfind(".") + 1]
-            mention = clean(mention)
+            mention = clean(prompt + ' ' + mention)
             logging.info(mention)
 
             if len(mention) < 8:
@@ -66,4 +66,4 @@ def main(mytimer: func.TimerRequest) -> None:
 
     mention = get_mention(prompt)
     logging.info("Posting mention.")
-    api.update_status(f"{prompt.replace('FOLLOWER', f'@{follower.screen_name}')} {mention} #cats")
+    api.update_status(f"{mention.replace('FOLLOWER', f'@{follower.screen_name}')} #cats")

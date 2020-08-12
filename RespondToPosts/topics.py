@@ -50,9 +50,9 @@ other_topics = [{
     'include_term':
     'my cat',
     'prompts': [
-        "What a silly cat. Your cat is super silly. This is a super silly cat. SO SILLY. Here are the ways I think your cat is silly.",
-        "Your cat is the silliest cat I've ever seen it my life. It's SO silly. I wish I had a cat that was that silly. If I were to describe how silly your cat is, I would describe it like this.",
-        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat. I will steal your cat and be happy. Here's how.",
+        "What a silly cat. Your cat is super silly. Here are the ways I think your cat is silly.",
+        "Your cat is the silliest cat I've ever seen it my life. If I were to describe how silly your cat is, I would describe it like this.",
+        "I wish I had your cat. I will steal your cat so that I can be happy. Here's how.",
         "I would like to replace your cats brain with an artifical intelligence. Your cat would be a robot. Here's what I would do.",
         "Next your cat is going to do the following."
     ],
@@ -84,9 +84,9 @@ other_topics = [{
     'include_term':
     'my cat',
     'prompts': [
-        "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Here are the ways I think your cat is cute: ",
+        "What a cute cat. Your cat is super cute. Here are the ways I think your cat is cute: ",
         "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
-        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat."
+        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy."
     ],
     "include_first_sentance":
     False,
@@ -100,9 +100,9 @@ other_topics = [{
     'include_term':
     'cat',
     'prompts': [
-        "What a cute cat. Your cat is super cute. This is a super cute cat. SO CUTE. Here are the ways I think your cat is cute: ",
-        "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
-        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy. I want your cat. Give me your cat.",
+        "What a cute cat. Your cat is super cute. Here are the ways I think your cat is cute: ",
+        "Your cat is the cutest cat I've ever seen it my life. If I were to describe how cute your cat is, I would describe it like this.",
+        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy.",
         "That is the cutest cat. I would like to replace it's brain with an artifical intelligence."
     ],
     "include_first_sentance":

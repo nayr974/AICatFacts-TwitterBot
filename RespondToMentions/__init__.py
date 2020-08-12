@@ -15,11 +15,11 @@ def main(mytimer: func.TimerRequest) -> None:
 
     for tweet in mentions:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
-                                           datetime.timedelta(minutes=20))
+                                           datetime.timedelta(minutes=5))
         if recent_tweet:
             #If a reply to another tweet, only a chance we will reply again
             if tweet.in_reply_to_status_id is not None:
-                if true_random_randint(0, 2) != 0:
+                if true_random_randint(0, 3) == 1:
                     continue
 
             cleantext = clean(tweet.full_text)

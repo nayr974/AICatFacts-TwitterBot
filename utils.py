@@ -57,18 +57,17 @@ def clean(text):
                        empty_string,
                        cleantext,
                        flags=re.IGNORECASE)
+    cleantext = re.sub(r'(\d+)\.', empty_string, cleantext, flags=re.IGNORECASE)
     cleantext = cleantext.replace('(', ' ').replace(')', '. ').replace('"', '').replace(
-        ',.',
-        '.').replace(' ,', ',').replace(',  ', ', ').replace(' .', '.').replace('.', '. ').replace(
-            '.  ', '. ').replace(' .', '.').replace(' !', '!').replace('!', '! ').replace(
-                '!  ', '! ').replace(' ?', '?').replace('?', '? ').replace('?  ', '? ').replace(
-                    ',,', ',').replace('...', '.').replace('..', '.').replace(' .', '.').replace(
-                        ' s ', 's ').replace('. and', ', and').replace('?.', '?').replace(
-                            '!.', '!').replace('? !', '?!').replace('! ?', '!?').replace(
-                                ' ,', ',').replace(' s.', 's.').replace(' s!', 's!').replace(
-                                    ' s?', 's?').replace(' s,',
-                                                         's,').replace(', e. g.',
-                                                                       '.').replace('e. g.', '')
+        ',.', '.').replace(' ,', ',').replace(',  ', ', ').replace(' .', '.').replace(
+            '.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
+                '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace(
+                    '?  ', '? ').replace(',,', ',').replace('...', '.').replace('..', '.').replace(
+                        ' .', '.').replace(' s ', 's ').replace('. and', ', and').replace(
+                            '?.', '?').replace('!.', '!').replace('? !', '?!').replace(
+                                '! ?', '!?').replace(' ,', ',').replace(' s.', 's.').replace(
+                                    ' s!', 's!').replace(' s?', 's?').replace(' s,', 's,').replace(
+                                        ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
     cleantext = cleantext.strip()
     cleantext = capitalize(cleantext, '.')
@@ -139,7 +138,15 @@ def get_generated_catfact(text):
 
 def get_generated_response(text, length):
     endpoint = os.environ['GENERATE_REPLY_URL']
-    json = {'prompt': {'text': text, 'isContinuation': True}, 'length': length}
+    json = {
+        'prompt': {
+            'text': text,
+            'isContinuation': True
+        },
+        'length': length,
+        'topP': 0.9,
+        'temperature': 0.9
+    }
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}
     responsejson = requests.post(endpoint, json=json, headers=headers).json()
