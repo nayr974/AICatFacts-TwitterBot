@@ -89,7 +89,7 @@ def deploy_catfact_model():
         "query":
         "mutation LogInByPassword($email: String!, $password: String!) {\n  logIn(input: {email: $email, credentials: {password: $password}})\n}\n"
     }
-    undeploy_at = datetime.utcnow() + timedelta(minutes=10)
+    undeploy_at = datetime.utcnow() + timedelta(minutes=15)
     deploy_json = {
         "operationName":
         "DeployModel",
@@ -128,7 +128,7 @@ def get_generated_catfact(text):
         'length': 240,
         'forceNoEnd': False,
         'topP': 0.8,
-        'temperature': 1.2
+        'temperature': 1.25
     }
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}

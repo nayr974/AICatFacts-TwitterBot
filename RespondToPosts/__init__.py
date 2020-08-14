@@ -35,8 +35,8 @@ def get_tweets(api, topic):
 #def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
 
-    number = true_random_randint(0, 1)
-    if number != 1:
+    number = true_random_randint(0, 2)
+    if number == 1:
         logging.info(str(number) + " Doesn't feel right to post.")
         return
 
