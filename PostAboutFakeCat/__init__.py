@@ -18,7 +18,7 @@ prompts = [
 
 def main(mytimer: func.TimerRequest) -> None:
 
-    number = true_random_randint(0, 75)
+    number = true_random_randint(0, 100)
     if number != 1:
         logging.info(str(number) + " Doesn't feel right to post.")
         return
@@ -39,7 +39,7 @@ def main(mytimer: func.TimerRequest) -> None:
         reply = get_generated_response(prompt, 200)
         reply = reply[:reply.find("\n")]
         reply = reply[:reply.rfind(".") + 1]
-        reply = clean(reply)
+        reply = clean(f"{prompt} {reply}")
 
         if len(reply) < 20:
             return get_catinfo()
@@ -48,7 +48,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if regex.search(reply) is not None or is_content_offensive(reply):
             return get_catinfo()
 
-        return f"{prompt} {reply} #ai #catsoftwitter"
+        return f"{reply} #ai #catsoftwitter"
 
     info = get_catinfo()
 
