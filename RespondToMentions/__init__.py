@@ -6,7 +6,6 @@ from ..utils import clean, get_api, is_content_offensive, get_generated_response
 import azure.functions as func
 
 
-#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
@@ -35,7 +34,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     if generate_count > 20:
                         raise Exception('generation limit hit')
 
-                    prompt = f'I am a machine learned artificial intelligence that talks about cats a lot. You said "{cleantext}". "Meow", being a cute cat robot my algorithm replied, "'
+                    prompt = f'I am a machine learned artificial intelligence that talks about cats a lot. You said "{cleantext} Meow." Being a cute cat robot my algorithm replied, "'
 
                     try:
                         reply = get_generated_response(prompt, 200)

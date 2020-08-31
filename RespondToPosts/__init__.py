@@ -3,6 +3,7 @@ import time
 import tweepy
 import re
 import datetime
+import random
 from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
 from .topics import cat_fact, other_topics
 
@@ -32,13 +33,48 @@ def get_tweets(api, topic):
                       tweet_mode='extended')
 
 
-#def main(req: func.HttpRequest) -> func.HttpResponse:
+def get_generated_prompt(api, prompts):
+    retry_count = 0
+
+    shuffled_prompts = random.SystemRandom().sample(prompts, len(prompts)-1)
+    promts_promt = "\n\n".join([x for x in shuffled_prompts])
+    
+    def get_prompt():
+        nonlocal retry_count
+        nonlocal api
+        nonlocal prompts
+
+        retry_count = retry_count + 1
+        if retry_count > 10:
+            raise Exception("Could not generate prompt text")
+
+        generated_prompt = get_generated_response(promts_promt, 200)
+        logging.info(generated_prompt)
+
+        generated_prompt = generated_prompt.split('\n\n')[1]
+        generated_prompt = clean(generated_prompt)
+
+        logging.info(generated_prompt)
+
+        if is_content_offensive(generated_prompt):
+            logging.info("Offensive prompt content.")
+            return get_prompt()
+    
+        if len(generated_prompt) < 20:
+            logging.info("Prompt too short. " + generated_prompt)
+            return get_prompt()
+
+        return generated_prompt
+        
+    return get_prompt()
+
+
 def main(mytimer: func.TimerRequest) -> None:
 
     number = true_random_randint(0, 2)
     if number == 1:
         logging.info(str(number) + " Doesn't feel right to post.")
-        return
+        return   
 
     api = get_api()
     trend = None
@@ -109,8 +145,9 @@ def main(mytimer: func.TimerRequest) -> None:
                 continue
 
             try:
-                logging.info("Good tweet. Getting reply.")
-                prompt = true_random_choice(topic["prompts"])
+                logging.info("Good tweet. Getting prompt.")
+                prompt = get_generated_prompt(api, topic["prompts"])
+                logging.info("Getting reply.")
                 reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
 
                 reply = reply[:reply.rfind('.') + 1]
@@ -122,8 +159,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     logging.info("Too short.")
                     continue
 
-                if topic["include_first_sentance"] == True:
-                    reply = f"{prompt} {reply}"
+                reply = f"{prompt} {reply}"
 
                 reply = clean(reply)
 
@@ -152,7 +188,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         logging.info("Tweets found, but none acceptable.")
 
-        number = true_random_randint(0, 9)
+        number = true_random_randint(0, 6)
         if number != 1:
             logging.info(str(number) + " Doesn't feel right to post.")
             return

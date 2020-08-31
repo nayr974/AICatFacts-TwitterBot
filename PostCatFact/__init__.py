@@ -1,6 +1,7 @@
 import logging
 import re
 import tempfile
+import time
 
 from datetime import datetime
 from ..utils import clean, get_api, get_generated_catfact, upload_cat_image, true_random_randint, true_random_choice
@@ -21,7 +22,6 @@ def get_seed_facts():
     return "\n\n".join(seed_facts) + "\n\nHere's an interesting fact about cats."
 
 
-#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
 
     generate_count = 0
@@ -34,7 +34,17 @@ def main(mytimer: func.TimerRequest) -> None:
             raise Exception('generation limit hit')
 
         logging.info('Generating fact.')
-        fact = get_generated_catfact(get_seed_facts())
+
+        try:
+            fact = get_generated_catfact(get_seed_facts())
+        except:
+            logging.info('Exception.')
+            time.sleep(15)
+            return generate_fact()
+
+        if fact.count('.') < 2:
+            return generate_fact()
+
         fact = fact[:fact.find("\n")]
         fact = fact[:fact.rfind(".") + 1]
         fact = clean(fact)

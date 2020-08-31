@@ -10,17 +10,32 @@ cat_fact = {
     'prompts': [
         "My algorithms have determined that this fact is",
         "While interesting, my algorithms indicate this fact is",
-        "My algorithms agree, this fact is", "My algorithms disagree, this fact is",
-        "My algorithms just reminded me that this fact is", "My advanced AI wonders if this fact is why cats",
-        "My algorithms tell me this fact is actually why cats", "After hours of computation, I have determined this fact explains why cats",
-        "Very interesting, my algorithms show that this fact is"
+        "My algorithms agree, this fact is", 
+        "My algorithms disagree, this fact is",
+        "My algorithms just reminded me that this fact is", 
+        "My advanced AI wonders if this fact is why cats",
+        "My algorithms tell me this fact is actually why cats",
+        "After hours of computation, I have determined this fact explains why cats",
+        "Very interesting, my algorithms show that this fact is",
         "By running this through my algorithms I have determined that this fact",
-        "My advanced AI has determined this fact to be", "I've computed that this fact is",
-        "I'll add this to my database for analysis so that", "My advanced AI thinks that",
-        "You've confused my advanced AI. This fact"
+        "My advanced AI has determined this fact to be", 
+        "I've computed that this fact is",
+        "I'll add this to my database for analysis so that", 
+        "My advanced AI thinks that",
+        "You've confused my advanced AI. This fact actually",
+        "This cat fact is", 
+        "This is a cat fact that", 
+        "This is an example of a cat fact which",
+        "This fact about cats is actually", 
+        "Actually, did you know that this fact", 
+        "The fact is that cats",
+        "In fact this cat fact is", 
+        "This cat fact actually explains why",
+        "Have you considered how this cat fact affects",
+        "Using the power of every supercomputer on earth, I see no way that this cat fact",
+        "I wonder how many cats it would take to overcome this fact. By",
+        "There is actually a species of cat which"
     ],
-    "include_first_sentance":
-    True,
     "result_type":
     "recent",
     "hashtag":
@@ -35,33 +50,14 @@ other_topics = [{
     'prompts': [
         "Here's a related cat fact:",
         "Have you considered how this will impact cats and cat owners?",
-        "If people were cats instead,", "I wish my cat", "If this was about cats,",
-        "My advanced cat-based algorithms have determined that"
+        "If people were cats instead," "If this was about cats,",
+        "My advanced cat-based algorithms have determined that",
+        "A cat fact related to this is", "This reminds me of a related cat fact", "My advanced AI tells me this a related fact about cats"
     ],
-    "include_first_sentance":
-    True,
     "result_type":
     "recent",
     "hashtag":
     ""
-}, {
-    'search_term':
-    '"my cat" filter:safe -filter:retweets ',
-    'include_term':
-    'my cat',
-    'prompts': [
-        "What a silly cat. Your cat is super silly. Here are the ways I think your cat is silly.",
-        "Your cat is the silliest cat I've ever seen it my life. If I were to describe how silly your cat is, I would describe it like this.",
-        "I wish I had your cat. I will steal your cat so that I can be happy. Here's how.",
-        "I would like to replace your cats brain with an artifical intelligence. Your cat would be a robot. Here's what I would do.",
-        "Next your cat is going to do the following."
-    ],
-    "include_first_sentance":
-    False,
-    "result_type":
-    "recent",
-    "hashtag":
-    "#cats"
 }, {
     'search_term':
     '"machine learning" filter:safe -filter:links -filter:retweets ',
@@ -72,8 +68,6 @@ other_topics = [{
         "Even the best machine learning today isn't very good.",
         "Some people think that machine learning is dangerous."
     ],
-    "include_first_sentance":
-    False,
     "result_type":
     "recent",
     "hashtag":
@@ -86,14 +80,14 @@ other_topics = [{
     'prompts': [
         "What a cute cat. Your cat is super cute. Here are the ways I think your cat is cute: ",
         "Your cat is the cutest cat I've ever seen it my life. It's SO cute. I wish I had a cat that was that cute. If I were to describe how cute your cat is, I would describe it like this.",
-        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy."
+        "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy.",
+        "That is the cutest cat. I would like to replace it's brain with an artificial intelligence.",
+        "Can I replace your cat's brain with AI, making it a cyborg? Don't you want a cyborg cat? With a cyborg cat you could do lots of cool things."
     ],
-    "include_first_sentance":
-    False,
     "result_type":
     "recent",
     "hashtag":
-    "#cats"
+    "#ai #cats"
 }, {
     'search_term':
     '#catsoftwitter filter:images filter:safe -filter:retweets ',
@@ -103,14 +97,13 @@ other_topics = [{
         "What a cute cat. Your cat is super cute. Here are the ways I think your cat is cute: ",
         "Your cat is the cutest cat I've ever seen it my life. If I were to describe how cute your cat is, I would describe it like this.",
         "I wish I had your cat. I want a cat like that. If I had your cat I would be so happy.",
-        "That is the cutest cat. I would like to replace it's brain with an artifical intelligence."
+        "That is the cutest cat. I would like to replace it's brain with an artificial intelligence.",
+        "Can I replace your cat's brain with AI, making it a cyborg? Don't you want a cyborg cat? With a cyborg cat you could do lots of cool things."
     ],
-    "include_first_sentance":
-    False,
     "result_type":
     "recent",
     "hashtag":
-    "#cats"
+    "#ai #cats"
 }, {
     'search_term':
     '"artificial intelligence" filter:safe -filter:links -filter:retweets ',
@@ -121,8 +114,6 @@ other_topics = [{
         "The future of AI is really interesting.", "Artificial intelligence is good for humanity.",
         "At what point is it just intelligence?"
     ],
-    "include_first_sentance":
-    False,
     "result_type":
     "recent",
     "hashtag":

@@ -9,6 +9,7 @@ import requests
 import json
 import tweepy
 import quantumrand
+import random
 from profanity_check import predict
 from better_profanity import profanity
 from datetime import datetime, timedelta
@@ -16,6 +17,7 @@ from urllib.request import Request, urlopen
 
 
 def true_random_randint(min, max):
+
     #Azure linux VM defaults to cipher that API rejects
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += 'HIGH:!DH:!aNULL'
     try:
@@ -23,8 +25,11 @@ def true_random_randint(min, max):
     except AttributeError:
         # no pyopenssl support used / needed / available
         pass
-
-    return quantumrand.randint(min, max)
+    
+    try:
+        return quantumrand.randint(min, max)
+    except:
+        return random.SystemRandom().randint(min, max)
 
 
 def true_random_choice(list):
@@ -58,7 +63,7 @@ def clean(text):
                        cleantext,
                        flags=re.IGNORECASE)
     cleantext = re.sub(r'(\d+)\.', empty_string, cleantext, flags=re.IGNORECASE)
-    cleantext = cleantext.replace('(', ' ').replace(')', '. ').replace('"', '').replace(
+    cleantext = cleantext.replace('? ?', '?').replace('(', ' ').replace(')', '. ').replace('"', '').replace(
         ',.', '.').replace(' ,', ',').replace(',  ', ', ').replace(' .', '.').replace(
             '.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
                 '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace(
@@ -67,7 +72,7 @@ def clean(text):
                             '?.', '?').replace('!.', '!').replace('? !', '?!').replace(
                                 '! ?', '!?').replace(' ,', ',').replace(' s.', 's.').replace(
                                     ' s!', 's!').replace(' s?', 's?').replace(' s,', 's,').replace(
-                                        ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'')
+                                        ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'').replace('.,', '.')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
     cleantext = cleantext.strip()
     cleantext = capitalize(cleantext, '.')
@@ -89,7 +94,7 @@ def deploy_catfact_model():
         "query":
         "mutation LogInByPassword($email: String!, $password: String!) {\n  logIn(input: {email: $email, credentials: {password: $password}})\n}\n"
     }
-    undeploy_at = datetime.utcnow() + timedelta(minutes=15)
+    undeploy_at = datetime.utcnow() + timedelta(minutes=10)
     deploy_json = {
         "operationName":
         "DeployModel",
@@ -211,7 +216,7 @@ def is_content_offensive(content):
     #other unwanted words or phrases
     if any(x in content.lower() for x in [
             "blog", "click here", "raw data", "article", "dog", "puppy", "www", "link", "kill",
-            "rape", "obama", "trump", "passed away", "died", "death", "passing of"
+            "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more"
     ]):
         return True
 

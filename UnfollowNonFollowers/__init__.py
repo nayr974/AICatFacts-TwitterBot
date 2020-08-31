@@ -5,7 +5,6 @@ from ..utils import get_api, true_random_randint, true_random_choice
 import azure.functions as func
 
 
-#def main(req: func.HttpRequest) -> func.HttpResponse:
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
