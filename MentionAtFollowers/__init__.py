@@ -38,7 +38,7 @@ def get_generated_prompt(api):
             raise Exception("Could not generate prompt text")
 
         try:
-            generated_prompt = get_generated_response(promts_promt, 240)
+            generated_prompt = get_generated_response(promts_promt, 220)
             generated_prompt = generated_prompt.split('\n\n')[1]
             generated_prompt = clean(generated_prompt)
 
