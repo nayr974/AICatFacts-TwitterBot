@@ -51,7 +51,7 @@ other_topics = [{
         "Here's a related cat fact:",
         "Have you considered how this will impact cats and cat owners?",
         "If people were cats instead," "If this was about cats,",
-        "My advanced cat-based algorithms have determined that",
+        "My advanced cat based algorithms have determined that",
         "A cat fact related to this is", "This reminds me of a related cat fact", "My advanced AI tells me this a related fact about cats"
     ],
     "result_type":
@@ -66,7 +66,8 @@ other_topics = [{
     'prompts': [
         "I love machine learning.", "It's amazing how far machine learning has come.",
         "Even the best machine learning today isn't very good.",
-        "Some people think that machine learning is dangerous."
+        "Some people think that machine learning is dangerous.", "Machine learning sucks.", 
+        "Getting Machine Learning to work let alone turn it into a sustainable business is a real pain.", "At a very high level, machine learning is the process of teaching a computer system how to make accurate predictions when fed data."
     ],
     "result_type":
     "recent",
@@ -112,7 +113,8 @@ other_topics = [{
     'prompts': [
         "Some people are scared by AI, but it excites me.",
         "The future of AI is really interesting.", "Artificial intelligence is good for humanity.",
-        "At what point is it just intelligence?"
+        "At what point is AI just intelligence?", "What happens if we fail to align the AI's goals with ours?", "If a superintelligent system is tasked with a ambitious geoengineering project, it might wreak havoc with our ecosystem as a side effect.", 
+        "Artificial intelligence isn’t malevolence but competence.", "A captivating conversation is taking place about the future of artificial intelligence and what it will/should mean for humanity."
     ],
     "result_type":
     "recent",

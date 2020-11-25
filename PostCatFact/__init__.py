@@ -70,7 +70,7 @@ def main(mytimer: func.TimerRequest) -> None:
 def tweet(fact):
     api = get_api()
 
-    number = true_random_randint(0, 2)
+    number = true_random_randint(0, 3)
     if number == 1:
         media_object = upload_cat_image()
         api.update_status(status=fact, media_ids=[media_object.media_id])

@@ -45,14 +45,12 @@ def single_space(match):
 
 
 def capitalize(text, delimiter):
-    split_text = text.split(delimiter)
-    for sentance in split_text:
-        sentance.capitalize()
-    return delimiter.join(split_text)
+    split_text = [sentence[0].upper()+sentence[1:] for sentence in text.split(delimiter)]
+    return delimiter.join(split_text).replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ')
 
 
 def clean(text):
-    cleantext = text.replace('\n', '').replace(';', '')
+    cleantext = text.replace('\n', ' ').replace(';', '.')
     cleantext = re.sub(
         r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})',
         empty_string,
@@ -63,11 +61,11 @@ def clean(text):
                        cleantext,
                        flags=re.IGNORECASE)
     cleantext = re.sub(r'(\d+)\.', empty_string, cleantext, flags=re.IGNORECASE)
-    cleantext = cleantext.replace('? ?', '?').replace('(', ' ').replace(')', '. ').replace('"', '').replace(
-        ',.', '.').replace(' ,', ',').replace(',  ', ', ').replace(' .', '.').replace(
+    cleantext = cleantext.replace('...', '. ').replace('..', '. ').replace('? ?', '? ').replace('(', ' ').replace(')', '. ').replace('"', '').replace(
+        ',.', '. ').replace(' ,', ', ').replace(',  ', ', ').replace(' .', '.').replace(
             '.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
                 '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace(
-                    '?  ', '? ').replace(',,', ',').replace('...', '.').replace('..', '.').replace(
+                    '?  ', '? ').replace(',,', ',').replace(
                         ' .', '.').replace(' s ', 's ').replace('. and', ', and').replace(
                             '?.', '?').replace('!.', '!').replace('? !', '?!').replace(
                                 '! ?', '!?').replace(' ,', ',').replace(' s.', 's.').replace(
@@ -75,9 +73,9 @@ def clean(text):
                                         ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'').replace('.,', '.')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
     cleantext = cleantext.strip()
-    cleantext = capitalize(cleantext, '.')
-    cleantext = capitalize(cleantext, '!')
-    cleantext = capitalize(cleantext, '?')
+    cleantext = capitalize(cleantext, '. ')
+    cleantext = capitalize(cleantext, '! ')
+    cleantext = capitalize(cleantext, '? ')
 
     return cleantext
 
@@ -216,7 +214,9 @@ def is_content_offensive(content):
     #other unwanted words or phrases
     if any(x in content.lower() for x in [
             "blog", "click here", "raw data", "article", "dog", "puppy", "www", "link", "kill",
-            "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more"
+            "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
+            "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more", ".com", ". com ", 
+            "check here", ". com.", " dr.", "bark", "cats a lot. You said"
     ]):
         return True
 

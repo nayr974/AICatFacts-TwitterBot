@@ -9,6 +9,9 @@ from .topics import cat_fact, other_topics
 
 import azure.functions as func
 
+def trim_reply(reply):
+    return reply[:reply.rfind('.')+1] if len(reply) < 240 else trim_reply(reply[:reply.rfind('.')])
+
 
 def get_random_trend(api):
     logging.info("Getting trend")
@@ -35,9 +38,6 @@ def get_tweets(api, topic):
 
 def get_generated_prompt(api, prompts):
     retry_count = 0
-
-    shuffled_prompts = random.SystemRandom().sample(prompts, len(prompts)-1)
-    promts_promt = "\n\n".join([x for x in shuffled_prompts])
     
     def get_prompt():
         nonlocal retry_count
@@ -48,23 +48,36 @@ def get_generated_prompt(api, prompts):
         if retry_count > 10:
             raise Exception("Could not generate prompt text")
 
-        generated_prompt = get_generated_response(promts_promt, 200)
-        logging.info(generated_prompt)
+        try:
+            shuffled_prompts = random.SystemRandom().sample(prompts, 5)
+            promts_promt = "\n\n".join([x for x in shuffled_prompts])
+            generated_prompt = get_generated_response(promts_promt, 300)
+            logging.info(generated_prompt)
 
-        generated_prompt = generated_prompt.split('\n\n')[1]
-        generated_prompt = clean(generated_prompt)
+            generated_prompt = generated_prompt.split('\n\n')[1]
+            generated_prompt = clean(generated_prompt)
 
-        logging.info(generated_prompt)
+            logging.info(generated_prompt)
 
-        if is_content_offensive(generated_prompt):
-            logging.info("Offensive prompt content.")
+            if is_content_offensive(generated_prompt):
+                logging.info("Offensive prompt content.")
+                return get_prompt()
+        
+            if len(generated_prompt) < 10:
+                logging.info("Prompt too short. " + generated_prompt)
+                return get_prompt()
+
+            if not any(x in generated_prompt.lower() for x in [
+                "cat ", "cat ", "cats ", " cats" "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty",
+                "feline", "lion", "tiger", "cheetah", "machine learning", "artificial intelligence", " ai ", " a.i. ", "ai's", " ai."
+            ]):
+                logging.info("Prompt doesn't mention topic. " + generated_prompt)
+                return get_prompt()
+
+            return generated_prompt
+
+        except:
             return get_prompt()
-    
-        if len(generated_prompt) < 20:
-            logging.info("Prompt too short. " + generated_prompt)
-            return get_prompt()
-
-        return generated_prompt
         
     return get_prompt()
 
@@ -114,12 +127,14 @@ def main(mytimer: func.TimerRequest) -> None:
         nonlocal topic
         nonlocal trend
         nonlocal tweet_reply_count
+
         tweet_reply_count = tweet_reply_count + 1
         if tweet_reply_count > 10:
             logging.info("Reply retry limit reached.")
             return
-
+            
         tweets = get_topic_tweets(api)
+
         for tweet in tweets:
             recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
                                                datetime.timedelta(minutes=30))
@@ -146,22 +161,27 @@ def main(mytimer: func.TimerRequest) -> None:
 
             try:
                 logging.info("Good tweet. Getting prompt.")
+
                 prompt = get_generated_prompt(api, topic["prompts"])
+
                 logging.info("Getting reply.")
-                reply = clean(get_generated_response(f"\"{cleantext}\". {prompt}", 220))
+                reply = get_generated_response(f"\"{cleantext}\". {prompt}", 220)
 
                 reply = reply[:reply.rfind('.') + 1]
                 if reply.count('.') > 2:
                     for _ in range(true_random_randint(0, reply.count('.') - 2)):
                         reply = reply[:reply.rfind('.') + 1]
 
-                if len(reply) < 20:
-                    logging.info("Too short.")
-                    continue
 
                 reply = f"{prompt} {reply}"
 
                 reply = clean(reply)
+
+                reply = trim_reply(reply)
+                
+                if len(reply) < 20:
+                    logging.info("Too short.")
+                    return tweet_reply(api)
 
                 logging.info(reply)
 
@@ -182,9 +202,10 @@ def main(mytimer: func.TimerRequest) -> None:
                     return
                 else:
                     logging.info("Bad characters.")
-            except:
-                logging.info("Exception.")
-                continue
+
+            except Exception as e:
+                logging.info("Exception. " + str(e))
+                return tweet_reply(api)
 
         logging.info("Tweets found, but none acceptable.")
 
@@ -196,6 +217,7 @@ def main(mytimer: func.TimerRequest) -> None:
         logging.info("New topic.")
 
         topic = true_random_choice(other_topics)
+        logging.info(topic["search_term"])
         if topic == other_topics[0]:  #TRENDING
             trend = get_random_trend(api)
             topic["search_term"] = f'"{trend}" filter:safe -filter:links -filter:retweets'

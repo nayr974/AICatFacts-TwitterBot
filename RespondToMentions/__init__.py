@@ -10,16 +10,12 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     logging.info("Getting mentions")
-    mentions = api.mentions_timeline(count=20, tweet_mode='extended')
+    mentions = api.mentions_timeline(count=3, tweet_mode='extended')
 
     for tweet in mentions:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
                                            datetime.timedelta(minutes=5))
         if recent_tweet:
-            #If a reply to another tweet, only a chance we will reply again
-            if tweet.in_reply_to_status_id is not None:
-                if true_random_randint(0, 3) == 1:
-                    continue
 
             cleantext = clean(tweet.full_text)
             if not is_content_offensive(cleantext):
@@ -39,7 +35,7 @@ def main(mytimer: func.TimerRequest) -> None:
                     try:
                         reply = get_generated_response(prompt, 200)
                         logging.info(reply)
-                        reply = reply[:reply.find('"') + 1] + '.'
+                        reply = reply[:reply.find('"') + 1]
                         reply = clean(reply)
                         logging.info(reply)
 
@@ -47,6 +43,9 @@ def main(mytimer: func.TimerRequest) -> None:
                             return get_reply(cleantext)
 
                         if reply == cleantext:
+                            return get_reply(cleantext)
+
+                        if reply == prompt:
                             return get_reply(cleantext)
 
                         regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
