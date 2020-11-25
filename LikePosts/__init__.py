@@ -1,7 +1,7 @@
 import logging
 import time
 import tweepy
-from ..utils import get_api, is_content_offensive
+from ..utils import get_api, is_content_offensive_or_invalid
 
 import azure.functions as func
 
@@ -18,7 +18,7 @@ def main(mytimer: func.TimerRequest) -> None:
         count=3,
         tweet_mode='extended')
     for tweet in tweets:
-        if tweet.favorited == False and not is_content_offensive(tweet.full_text):
+        if tweet.favorited == False and not is_content_offensive_or_invalid(tweet.full_text):
             try:
                 logging.info("Fav!")
                 api.create_favorite(tweet.id)

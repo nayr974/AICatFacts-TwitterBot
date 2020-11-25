@@ -1,7 +1,7 @@
 import logging
 import re
 import datetime
-from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
+from ..utils import clean, get_api, is_content_offensive_or_invalid, get_generated_response, true_random_randint, true_random_choice
 
 import azure.functions as func
 
@@ -18,7 +18,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if recent_tweet:
 
             cleantext = clean(tweet.full_text)
-            if not is_content_offensive(cleantext):
+            if not is_content_offensive_or_invalid(cleantext):
                 logging.info('Good mention. Replying to: ' + cleantext)
 
                 generate_count = 0
@@ -49,7 +49,7 @@ def main(mytimer: func.TimerRequest) -> None:
                             return get_reply(cleantext)
 
                         regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-                        if regex.search(reply) is not None or is_content_offensive(reply):
+                        if regex.search(reply) is not None or is_content_offensive_or_invalid(reply):
                             return get_reply(cleantext)
 
                         return reply

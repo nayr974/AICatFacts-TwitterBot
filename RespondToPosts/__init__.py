@@ -4,7 +4,7 @@ import tweepy
 import re
 import datetime
 import random
-from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
+from ..utils import clean, get_api, is_content_offensive_or_invalid, get_generated_response, true_random_randint, true_random_choice
 from .topics import cat_fact, other_topics
 
 import azure.functions as func
@@ -19,7 +19,7 @@ def get_random_trend(api):
 
     def get_safe_trend(trending):
         trend = true_random_choice(trending[0]['trends'][:15])
-        if not is_content_offensive(trend['name']):
+        if not is_content_offensive_or_invalid(trend['name']):
             return trend['name']
         else:
             return get_random_trend(trending)
@@ -59,7 +59,7 @@ def get_generated_prompt(api, prompts):
 
             logging.info(generated_prompt)
 
-            if is_content_offensive(generated_prompt):
+            if is_content_offensive_or_invalid(generated_prompt):
                 logging.info("Offensive prompt content.")
                 return get_prompt()
         
@@ -149,7 +149,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
             cleantext = clean(tweet.full_text)
 
-            if is_content_offensive(cleantext):
+            if is_content_offensive_or_invalid(cleantext):
                 logging.info("Offensive content.")
                 continue
             if len(cleantext) < 50:
@@ -187,7 +187,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
                 #look for garbage
                 regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-                if regex.search(reply) == None and not is_content_offensive(reply):
+                if regex.search(reply) == None and not is_content_offensive_or_invalid(reply):
                     logging.info("Good reply. Posting.")
 
                     logging.info("Posting.")

@@ -201,7 +201,7 @@ def upload_cat_image():
                 return media_object
 
 
-def is_content_offensive(content):
+def is_content_offensive_or_invalid(content):
     if predict([content])[0] == 1:
         return True
 
@@ -218,6 +218,9 @@ def is_content_offensive(content):
             "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more", ".com", ". com ", 
             "check here", ". com.", " dr.", "bark", "cats a lot. You said"
     ]):
+        return True
+
+    if not content.count(".") > 1:
         return True
 
     return False

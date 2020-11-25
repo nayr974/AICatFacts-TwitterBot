@@ -6,7 +6,7 @@ import os.path
 import random
 
 from urllib.request import Request, urlopen
-from ..utils import clean, get_api, is_content_offensive, get_generated_response, true_random_randint, true_random_choice
+from ..utils import clean, get_api, is_content_offensive_or_invalid, get_generated_response, true_random_randint, true_random_choice
 
 import azure.functions as func
 
@@ -49,7 +49,7 @@ def get_generated_prompt(api):
             generated_prompt = generated_prompt.split('\n\n')[1]
             generated_prompt = clean(generated_prompt)
 
-            if is_content_offensive(generated_prompt):
+            if is_content_offensive_or_invalid(generated_prompt):
                 logging.info("Offensive prompt content." + generated_prompt)
                 return get_prompt()
         
@@ -99,7 +99,7 @@ def main(mytimer: func.TimerRequest) -> None:
             return get_catinfo()
 
         regex = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
-        if regex.search(reply) is not None or is_content_offensive(reply):
+        if regex.search(reply) is not None or is_content_offensive_or_invalid(reply):
             return get_catinfo()
 
         return f"{reply} #ai #catsoftwitter"
