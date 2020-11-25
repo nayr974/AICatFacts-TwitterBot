@@ -59,15 +59,14 @@ def main(mytimer: func.TimerRequest) -> None:
                 reply = get_reply(cleantext)
                 logging.info("Posting reply.")
 
-                #If not a reply to another tweet, retweet with comment otherwise reply
+                api.update_status(f"@{tweet.user.screen_name} {reply}",
+                                    in_reply_to_status_id=tweet.id,
+                                    auto_populate_reply_metadata=True)
+
+                #If not a reply to another tweet, also retweet
                 if tweet.in_reply_to_status_id is None:
-                    api.update_status(
-                        f"{reply} @{tweet.user.screen_name} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-                    )
-                else:
-                    api.update_status(f"@{tweet.user.screen_name} {reply}",
-                                      in_reply_to_status_id=tweet.id,
-                                      auto_populate_reply_metadata=True)
+                    api.retweet(tweet.id)
+
                 logging.info("Liking tweet")
                 api.create_favorite(tweet.id)
                 logging.info("Liked.")

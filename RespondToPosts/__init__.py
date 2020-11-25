@@ -84,7 +84,7 @@ def get_generated_prompt(api, prompts):
 
 def main(mytimer: func.TimerRequest) -> None:
 
-    number = true_random_randint(0, 2)
+    number = true_random_randint(0, 1)
     if number == 1:
         logging.info(str(number) + " Doesn't feel right to post.")
         return   
@@ -192,9 +192,20 @@ def main(mytimer: func.TimerRequest) -> None:
 
                     logging.info("Posting.")
                     hashtag = topic["hashtag"]
-                    api.update_status(
-                        f"{reply} {hashtag} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-                    )
+                    
+                    
+                    number = true_random_randint(0, 2)
+                    if number == 1:
+                        #quote tweet
+                        api.update_status(
+                            f"{reply} {hashtag} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+                        )
+                    else:
+                        #reply
+                        api.update_status(f"@{tweet.user.screen_name} {reply}",
+                                            in_reply_to_status_id=tweet.id,
+                                            auto_populate_reply_metadata=True)
+
                     logging.info("Posted.")
                     logging.info("Liking tweet")
                     api.create_favorite(tweet.id)
@@ -209,7 +220,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         logging.info("Tweets found, but none acceptable.")
 
-        number = true_random_randint(0, 6)
+        number = true_random_randint(0, 3)
         if number != 1:
             logging.info(str(number) + " Doesn't feel right to post.")
             return
