@@ -139,7 +139,7 @@ def get_generated_catfact(text):
     return responsejson["data"]["text"]
 
 
-def get_generated_response(text, length):
+def get_generated_response(text, length, temp=0.9):
     endpoint = os.environ['GENERATE_REPLY_URL']
     json = {
         'prompt': {
@@ -148,7 +148,7 @@ def get_generated_response(text, length):
         },
         'length': length,
         'topP': 0.9,
-        'temperature': 0.9
+        'temperature': temp
     }
     token = os.environ['GENERATE_TOKEN']
     headers = {"Authorization": f"Bearer {token}"}
@@ -216,11 +216,8 @@ def is_content_offensive_or_invalid(content):
             "blog", "click here", "raw data", "article", "dog", "puppy", "www", "link", "kill",
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
             "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more", ".com", ". com ", 
-            "check here", ". com.", " dr.", "bark", "cats a lot. You said"
+            "check here", ". com.", " dr.", "bark", "cats a lot. you said"
     ]):
-        return True
-
-    if not content.count(".") > 1:
         return True
 
     return False

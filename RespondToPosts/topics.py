@@ -6,7 +6,7 @@ cat_fact = {
         "the fact that cats", "it\'s true that cats"
     ],
     'include_term':
-    "",
+    "fact",
     'prompts': [
         "My algorithms have determined that this fact is",
         "While interesting, my algorithms indicate this fact is",
@@ -20,8 +20,8 @@ cat_fact = {
         "By running this through my algorithms I have determined that this fact",
         "My advanced AI has determined this fact to be", 
         "I've computed that this fact is",
-        "I'll add this to my database for analysis so that", 
-        "My advanced AI thinks that",
+        "I'll add this fact to my database for analysis so that", 
+        "My advanced AI thinks that this fact",
         "You've confused my advanced AI. This fact actually",
         "This cat fact is", 
         "This is a cat fact that", 
@@ -33,8 +33,7 @@ cat_fact = {
         "This cat fact actually explains why",
         "Have you considered how this cat fact affects",
         "Using the power of every supercomputer on earth, I see no way that this cat fact",
-        "I wonder how many cats it would take to overcome this fact. By",
-        "There is actually a species of cat which"
+        "I wonder how many cats it would take to overcome this fact. By"
     ],
     "result_type":
     "recent",
@@ -46,7 +45,7 @@ other_topics = [{
     'search_term':
     '"TRENDING"',
     'include_term':
-    'TRENDING',
+    'cat',
     'prompts': [
         "Here's a related cat fact:",
         "Have you considered how this will impact cats and cat owners?",

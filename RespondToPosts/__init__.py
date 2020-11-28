@@ -51,7 +51,7 @@ def get_generated_prompt(api, prompts):
         try:
             shuffled_prompts = random.SystemRandom().sample(prompts, 5)
             promts_promt = "\n\n".join([x for x in shuffled_prompts])
-            generated_prompt = get_generated_response(promts_promt, 300)
+            generated_prompt = get_generated_response(promts_promt, 300, temp=0.7)
             logging.info(generated_prompt)
 
             generated_prompt = generated_prompt.split('\n\n')[1]
@@ -68,7 +68,7 @@ def get_generated_prompt(api, prompts):
                 return get_prompt()
 
             if not any(x in generated_prompt.lower() for x in [
-                "cat ", "cat ", "cats ", " cats" "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty",
+                "cat ", "cat ", "cats ", " cats" "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty", "fact",
                 "feline", "lion", "tiger", "cheetah", "machine learning", "artificial intelligence", " ai ", " a.i. ", "ai's", " ai."
             ]):
                 logging.info("Prompt doesn't mention topic. " + generated_prompt)
@@ -83,15 +83,14 @@ def get_generated_prompt(api, prompts):
 
 
 def main(mytimer: func.TimerRequest) -> None:
-
-    number = true_random_randint(0, 1)
-    if number == 1:
-        logging.info(str(number) + " Doesn't feel right to post.")
-        return   
-
     api = get_api()
     trend = None
-    topic = cat_fact
+    
+    number = true_random_randint(0, 1)
+    if number == 1:
+        topic = cat_fact
+    else:
+        topic = true_random_choice(other_topics)
 
     def get_topic_tweets(api):
         nonlocal trend
@@ -165,7 +164,7 @@ def main(mytimer: func.TimerRequest) -> None:
                 prompt = get_generated_prompt(api, topic["prompts"])
 
                 logging.info("Getting reply.")
-                reply = get_generated_response(f"\"{cleantext}\". {prompt}", 220)
+                reply = get_generated_response(f"\"{cleantext}\". {prompt}", 180)
 
                 reply = reply[:reply.rfind('.') + 1]
                 if reply.count('.') > 2:
@@ -194,7 +193,14 @@ def main(mytimer: func.TimerRequest) -> None:
                     hashtag = topic["hashtag"]
                     
                     
-                    number = true_random_randint(0, 2)
+                    logging.info("Liking tweet")
+                    try:
+                        api.create_favorite(tweet.id)
+                    except:
+                        return
+                    logging.info("Liked.")
+
+                    number = true_random_randint(0, 5)
                     if number == 1:
                         #quote tweet
                         api.update_status(
@@ -207,9 +213,6 @@ def main(mytimer: func.TimerRequest) -> None:
                                             auto_populate_reply_metadata=True)
 
                     logging.info("Posted.")
-                    logging.info("Liking tweet")
-                    api.create_favorite(tweet.id)
-                    logging.info("Liked.")
                     return
                 else:
                     logging.info("Bad characters.")
@@ -219,12 +222,6 @@ def main(mytimer: func.TimerRequest) -> None:
                 return tweet_reply(api)
 
         logging.info("Tweets found, but none acceptable.")
-
-        number = true_random_randint(0, 3)
-        if number != 1:
-            logging.info(str(number) + " Doesn't feel right to post.")
-            return
-
         logging.info("New topic.")
 
         topic = true_random_choice(other_topics)
