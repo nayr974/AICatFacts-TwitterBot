@@ -128,7 +128,7 @@ def get_generated_catfact(text):
         'prompt': {
             'text': text
         },
-        'length': 240,
+        'length': 180,
         'forceNoEnd': False,
         'topP': 0.8,
         'temperature': 1.25
