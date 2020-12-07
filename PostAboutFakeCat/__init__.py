@@ -71,16 +71,8 @@ def get_generated_prompt(api):
     return get_prompt()
 
 def main(mytimer: func.TimerRequest) -> None:
-
-    number = true_random_randint(0, 75)
-    if number != 1:
-        logging.info(str(number) + " Doesn't feel right to post.")
-        return
-
     api = get_api()
-
     prompt = get_generated_prompt(api)
-
     generate_count = 0
 
     def get_catinfo():

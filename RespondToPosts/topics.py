@@ -50,7 +50,7 @@ other_topics = [{
         "Here's a related cat fact:",
         "Have you considered how this will impact cats and cat owners?",
         "If people were cats instead," "If this was about cats,",
-        "My advanced cat based algorithms have determined that",
+        "My advanced cat fact algorithms have determined that",
         "A cat fact related to this is", "This reminds me of a related cat fact", "My advanced AI tells me this a related fact about cats"
     ],
     "result_type":

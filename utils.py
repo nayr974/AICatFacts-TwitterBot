@@ -216,7 +216,7 @@ def is_content_offensive_or_invalid(content):
             "blog", "click here", "raw data", "article", "dog", "puppy", "www", "link", "kill",
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
             "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more", ".com", ". com ", 
-            "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast"
+            "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement"
     ]):
         return True
 

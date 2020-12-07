@@ -31,7 +31,7 @@ def get_tweets(api, topic):
     logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
     return api.search(q=topic["search_term"],
                       result_type=topic["result_type"],
-                      count=50,
+                      count=100,
                       lang='en',
                       tweet_mode='extended')
 
@@ -86,11 +86,7 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
     trend = None
     
-    number = true_random_randint(0, 1)
-    if number == 1:
-        topic = cat_fact
-    else:
-        topic = true_random_choice(other_topics)
+    topic = cat_fact
 
     def get_topic_tweets(api):
         nonlocal trend
@@ -128,7 +124,7 @@ def main(mytimer: func.TimerRequest) -> None:
         nonlocal tweet_reply_count
 
         tweet_reply_count = tweet_reply_count + 1
-        if tweet_reply_count > 10:
+        if tweet_reply_count > 50:
             logging.info("Reply retry limit reached.")
             return
             
@@ -138,6 +134,9 @@ def main(mytimer: func.TimerRequest) -> None:
             recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
                                                datetime.timedelta(minutes=30))
             if not recent_tweet:
+                continue
+            
+            if topic != cat_fact and not tweet.user.followers_count > 1000:
                 continue
 
             if topic == cat_fact and not any(x in tweet.full_text.lower()
@@ -200,7 +199,7 @@ def main(mytimer: func.TimerRequest) -> None:
                         return
                     logging.info("Liked.")
 
-                    number = true_random_randint(0, 5)
+                    number = true_random_randint(0, 7)
                     if number == 1:
                         #quote tweet
                         api.update_status(
