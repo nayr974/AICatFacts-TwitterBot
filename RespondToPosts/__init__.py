@@ -136,7 +136,7 @@ def main(mytimer: func.TimerRequest) -> None:
             if not recent_tweet:
                 continue
             
-            if topic != cat_fact and not tweet.user.followers_count > 1000:
+            if topic != cat_fact and not tweet.user.followers_count > 250:
                 continue
 
             if topic == cat_fact and not any(x in tweet.full_text.lower()

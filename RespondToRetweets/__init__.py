@@ -9,13 +9,13 @@ import azure.functions as func
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
-    logging.info("Getting mentions")
-    mentions = api.mentions_timeline(count=3, tweet_mode='extended')
+    logging.info("Getting retweets")
+    retweets = api.retweets_of_me(count=3, tweet_mode='extended')
 
-    for tweet in mentions:
+    for tweet in retweets:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
                                            datetime.timedelta(minutes=5))
-        if recent_tweet:
+        if recent_tweet and tweet.quoted_status:
 
             cleantext = clean(tweet.full_text)
             if not is_content_offensive_or_invalid(cleantext):
@@ -62,10 +62,6 @@ def main(mytimer: func.TimerRequest) -> None:
                 api.update_status(f"@{tweet.user.screen_name} {reply}",
                                     in_reply_to_status_id=tweet.id,
                                     auto_populate_reply_metadata=True)
-
-                #If not a reply to another tweet, also retweet
-                if tweet.in_reply_to_status_id is None:
-                    api.retweet(tweet.id)
 
                 logging.info("Liking tweet")
                 api.create_favorite(tweet.id)

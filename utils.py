@@ -70,13 +70,13 @@ def clean(text):
                             '?.', '?').replace('!.', '!').replace('? !', '?!').replace(
                                 '! ?', '!?').replace(' ,', ',').replace(' s.', 's.').replace(
                                     ' s!', 's!').replace(' s?', 's?').replace(' s,', 's,').replace(
-                                        ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'').replace('.,', '.')
+                                        ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'').replace('.,', '.').replace('..', '.')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
     cleantext = cleantext.strip()
     cleantext = capitalize(cleantext, '. ')
     cleantext = capitalize(cleantext, '! ')
     cleantext = capitalize(cleantext, '? ')
-
+    cleantext = cleantext.replace('..', '.')
     return cleantext
 
 
@@ -215,8 +215,9 @@ def is_content_offensive_or_invalid(content):
     if any(x in content.lower() for x in [
             "blog", "click here", "raw data", "article", "dog", "puppy", "www", "link", "kill",
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
-            "in this paper", "download here", "A. ", "B. ", "1. ", "2. ", "read more", ".com", ". com ", 
-            "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement"
+            "in this paper", "download here", "a. ", "b. ", "1. ", "2. ", "read more", ".com", ". com ", 
+            "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement",
+            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post"
     ]):
         return True
 
