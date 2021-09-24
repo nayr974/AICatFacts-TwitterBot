@@ -10,12 +10,12 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     logging.info("Getting mentions")
-    mentions = api.mentions_timeline(count=3, tweet_mode='extended')
+    mentions = api.mentions_timeline(count=5, tweet_mode='extended')
 
     for tweet in mentions:
         recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
                                            datetime.timedelta(minutes=5))
-        if recent_tweet:
+        if recent_tweet and tweet.user.screen_name != "AICatFacts":
 
             cleantext = clean(tweet.full_text)
             if not is_content_offensive_or_invalid(cleantext):

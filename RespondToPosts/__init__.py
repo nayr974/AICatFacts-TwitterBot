@@ -132,7 +132,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         for tweet in tweets:
             recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
-                                               datetime.timedelta(minutes=30))
+                                               datetime.timedelta(minutes=44))
             if not recent_tweet:
                 continue
             
@@ -163,13 +163,15 @@ def main(mytimer: func.TimerRequest) -> None:
                 prompt = get_generated_prompt(api, topic["prompts"])
 
                 logging.info("Getting reply.")
-                reply = get_generated_response(f"\"{cleantext}\". {prompt}", 180)
+                reply = get_generated_response(f"\"{cleantext}\". {prompt}", 280)
 
                 reply = reply[:reply.rfind('.') + 1]
                 if reply.count('.') > 2:
                     for _ in range(true_random_randint(0, reply.count('.') - 2)):
                         reply = reply[:reply.rfind('.') + 1]
 
+                while reply.count(".") > 2 or len(reply) > 280:
+                    reply = reply[:reply.rfind(".", 0, reply.rfind(".")) + 1]
 
                 reply = f"{prompt} {reply}"
 
@@ -199,17 +201,9 @@ def main(mytimer: func.TimerRequest) -> None:
                         return
                     logging.info("Liked.")
 
-                    number = true_random_randint(0, 7)
-                    if number == 1:
-                        #quote tweet
-                        api.update_status(
-                            f"{reply} {hashtag} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-                        )
-                    else:
-                        #reply
-                        api.update_status(f"@{tweet.user.screen_name} {reply}",
-                                            in_reply_to_status_id=tweet.id,
-                                            auto_populate_reply_metadata=True)
+                    api.update_status(
+                        f"{reply} {hashtag} https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+                    )
 
                     logging.info("Posted.")
                     return

@@ -1,6 +1,12 @@
 azure-functions
 tweepy
-profanity-check
-scikit-learn==0.20.3
 quantumrand
-better-profanity
+transformers
+datasets
+#torchvision==0.10.0+cu111 
+#torchaudio===0.9.0
+nltk
+better_profanity
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==1.9.1+cpu
+torchvision==0.9.1+cpu

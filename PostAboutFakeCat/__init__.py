@@ -22,7 +22,7 @@ prompts = [
     "Choupette Lagerfeld is totally living the dream. Not only is her human, Karl Lagerfeld, famous and rich, but she and Karl adore each other.",
     "Talk about a science experiment. The cat named Little Nicky is the first commercially produced cat clone, produced from the DNA of a 19-year-old Maine Coon who died in 2003.",
     "This cat named Unsinkable Sam went down in history for surviving three major shipwrecks. The first was the German Battleship Bismarck, sunk by the British in 1941.",
-    "Snowball belonged to a Canadian couple who lived on Prince Edward Island with their son, Douglas Beamish.",
+    "This cat belonged to a Canadian couple who lived on Prince Edward Island with their son, Douglas Beamish.",
     "Once known as the internet’s most famous cat, Japanese feline Maru earned his fame in 2007 from YouTube.",
     "If you’ve seen the Austin Powers movie series, you’ve seen Dr. Evil’s hairless cat, Mr. Bigglesworth.",
     "Oscar is the tortoiseshell cat who has made national headlines for the last decade due to his uncanny ability to predict death.",
@@ -32,21 +32,21 @@ prompts = [
 
 def get_generated_prompt(api):
     retry_count = 0
-
-    shuffled_prompts = random.SystemRandom().sample(prompts, 8)
-    promts_promt = "\n\n".join([x for x in shuffled_prompts])
     
     def get_prompt():
         nonlocal retry_count
         nonlocal api
 
         retry_count = retry_count + 1
-        if retry_count > 10:
+        if retry_count > 20:
             raise Exception("Could not generate prompt text")
 
+        shuffled_prompts = random.SystemRandom().sample(prompts, 8)
+        promts_promt = "\n\n".join([x for x in shuffled_prompts])
+
         try:
-            generated_prompt = get_generated_response(promts_promt, 200)
-            generated_prompt = generated_prompt.split('\n\n')[1]
+            generated_prompt = get_generated_response(promts_promt, 500)
+            generated_prompt = generated_prompt.split('\n')[2]
             generated_prompt = clean(generated_prompt)
 
             if is_content_offensive_or_invalid(generated_prompt):
@@ -72,6 +72,7 @@ def get_generated_prompt(api):
 
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
+    shuffled_prompts = random.SystemRandom().sample(prompts, 8)
     prompt = get_generated_prompt(api)
     generate_count = 0
 
@@ -82,10 +83,12 @@ def main(mytimer: func.TimerRequest) -> None:
         if generate_count > 20:
             raise Exception('generation limit hit')
 
-        reply = get_generated_response(prompt, 240)
+        reply = get_generated_response(prompt, 400, temp=0.7)
         reply = reply[:reply.rfind("\n")]
         reply = reply[:reply.rfind(".") + 1]
         reply = clean(f"{prompt} {reply}")
+        while reply.count(".") > 3 or len(reply) > 280:
+            reply = reply[:reply.rfind(".", 0, reply.rfind(".")) + 1]
 
         if len(reply) < 20:
             return get_catinfo()

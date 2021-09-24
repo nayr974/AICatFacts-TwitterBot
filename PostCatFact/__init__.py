@@ -1,11 +1,10 @@
 import logging
 import re
-import tempfile
 import time
 
 from datetime import datetime
 from ..utils import clean, get_api, get_generated_catfact, upload_cat_image, true_random_randint, true_random_choice
-from .catfacts import facts
+from ..catfacts import facts
 
 import azure.functions as func
 
@@ -47,12 +46,12 @@ def main(mytimer: func.TimerRequest) -> None:
 
         fact = fact[:fact.find("\n")]
         fact = fact[:fact.rfind(".") + 1]
+        while fact.count(".") > 2 or len(fact) > 280:
+            fact = fact[:fact.rfind(".", 0, fact.rfind(".")) + 1]
         fact = clean(fact)
-        logging.info(fact)
-
         unwanted_chars = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
 
-        return fact if fact.find(".") is not None and unwanted_chars.search(
+        return fact if fact.find(".") != -1 and unwanted_chars.search(
             fact) == None and not any(x in fact.lower() for x in [
                 " dog ", " dogs ", " rat ", " rats ", " mouse ", " bitch ", " bitches ", " mice ",
                 " shark ", " sharks "
@@ -63,6 +62,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
     new_fact = f"{generate_fact()} #ai #catfacts"
 
+    logging.info(new_fact)
     logging.info('Posting content.')
     tweet(new_fact)
 

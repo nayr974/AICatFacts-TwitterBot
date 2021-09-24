@@ -1,20 +1,28 @@
 import logging
-import time
 import io
 import os
 import os.path
 import tempfile
 import re
 import requests
-import json
 import tweepy
 import quantumrand
 import random
-from profanity_check import predict
+import nltk
+#import torch
 from better_profanity import profanity
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from nltk.corpus import words
 
+nltk.download('words')
+
+#torch.cuda.empty_cache()
+#device = torch.device("cuda") 
+
+model = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path="distilgpt2")#.to(device)
+tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
 
 def true_random_randint(min, max):
 
@@ -45,6 +53,9 @@ def single_space(match):
 
 
 def capitalize(text, delimiter):
+    logging.info(text)
+    if text.find(delimiter) == -1:
+        return text
     split_text = [sentence[0].upper()+sentence[1:] for sentence in text.split(delimiter)]
     return delimiter.join(split_text).replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ')
 
@@ -61,18 +72,18 @@ def clean(text):
                        cleantext,
                        flags=re.IGNORECASE)
     cleantext = re.sub(r'(\d+)\.', empty_string, cleantext, flags=re.IGNORECASE)
-    cleantext = cleantext.replace('...', '. ').replace('..', '. ').replace('? ?', '? ').replace('(', ' ').replace(')', '. ').replace('"', '').replace(
+    cleantext = cleantext.replace('...', '. ').replace('..', '. ').replace('? ?', '? ').replace('(', ' ').replace(')', ' ').replace('"', '').replace(
         ',.', '. ').replace(' ,', ', ').replace(',  ', ', ').replace(' .', '.').replace(
             '.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
                 '!', '! ').replace('!  ', '! ').replace(' ?', '?').replace('?', '? ').replace(
                     '?  ', '? ').replace(',,', ',').replace(
                         ' .', '.').replace(' s ', 's ').replace('. and', ', and').replace(
                             '?.', '?').replace('!.', '!').replace('? !', '?!').replace(
-                                '! ?', '!?').replace(' ,', ',').replace(' s.', 's.').replace(
+                                '! ?', '!?').replace(' ,', ', ').replace(' s.', 's.').replace(
                                     ' s!', 's!').replace(' s?', 's?').replace(' s,', 's,').replace(
                                         ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'').replace('.,', '.').replace('..', '.')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
-    cleantext = cleantext.strip()
+    cleantext = cleantext.strip().lower()
     cleantext = capitalize(cleantext, '. ')
     cleantext = capitalize(cleantext, '! ')
     cleantext = capitalize(cleantext, '? ')
@@ -80,80 +91,28 @@ def clean(text):
     return cleantext
 
 
-def deploy_catfact_model():
-    endpoint = os.environ['DEPLOY_URL']
-    login_json = {
-        "operationName":
-        "LogInByPassword",
-        "variables": {
-            "email": os.environ['DEPLOY_CLIENT_ID'],
-            "password": os.environ['DEPLOY_CLIENT_SECRET']
-        },
-        "query":
-        "mutation LogInByPassword($email: String!, $password: String!) {\n  logIn(input: {email: $email, credentials: {password: $password}})\n}\n"
-    }
-    undeploy_at = datetime.utcnow() + timedelta(minutes=10)
-    deploy_json = {
-        "operationName":
-        "DeployModel",
-        "variables": {
-            "input": {
-                "id": os.environ['DEPLOY_MODEL_ID'],
-                "autoUndeployAt": undeploy_at.isoformat() + 'Z'
-            }
-        },
-        "query":
-        "mutation DeployModel($input: DeployModelInput!) {\n  deployModel(input: $input) {\n    id\n    deploymentStage\n    autoUndeployAt\n    __typename\n  }\n}\n"
-    }
-
-    session = requests.Session()
-    login_response = session.post(endpoint, json=login_json)
-
-    headers = {
-        "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0",
-        "Accept": "*/*",
-        "content-type": "application/json",
-        "x-csrf-token": session.cookies.get_dict()["trainer:csrf"]
-    }
-
-    time.sleep(1)
-    session.post(endpoint, json=deploy_json, headers=headers)
-    return
-
-
 def get_generated_catfact(text):
-    endpoint = os.environ['GENERATE_FACT_URL']
-    json = {
-        'prompt': {
-            'text': text
-        },
-        'length': 180,
-        'forceNoEnd': False,
-        'topP': 0.8,
-        'temperature': 1.25
-    }
-    token = os.environ['GENERATE_TOKEN']
-    headers = {"Authorization": f"Bearer {token}"}
-    responsejson = requests.post(endpoint, json=json, headers=headers).json()
-    return responsejson["data"]["text"]
+    inputs = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"]#.to(device)
+    outputs = model.generate(inputs,
+        do_sample=True, 
+        min_length=192,
+        max_length=512,
+        top_p=0.85, 
+        top_k=50,
+        length_penalty=0.5,
+        temperature=1.4)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(text):]
 
 
 def get_generated_response(text, length, temp=0.9):
-    endpoint = os.environ['GENERATE_REPLY_URL']
-    json = {
-        'prompt': {
-            'text': text,
-            'isContinuation': True
-        },
-        'length': length,
-        'topP': 0.9,
-        'temperature': temp
-    }
-    token = os.environ['GENERATE_TOKEN']
-    headers = {"Authorization": f"Bearer {token}"}
-    responsejson = requests.post(endpoint, json=json, headers=headers).json()
-    return responsejson["data"]["text"]
+    inputs = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"]#.to(device)
+    outputs = model.generate(inputs,
+        do_sample=True, 
+        min_length=length,
+        max_length=512,
+        top_p=0.9, 
+        temperature=temp)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(text):]
 
 
 def get_api():
@@ -202,8 +161,6 @@ def upload_cat_image():
 
 
 def is_content_offensive_or_invalid(content):
-    if predict([content])[0] == 1:
-        return True
 
     if re.search(offensive, content) is not None:
         return True
@@ -217,7 +174,7 @@ def is_content_offensive_or_invalid(content):
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
             "in this paper", "download here", "a. ", "b. ", "1. ", "2. ", "read more", ".com", ". com ", 
             "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement",
-            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post"
+            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", "instagram", "facebook", "tiktok"
     ]):
         return True
 
