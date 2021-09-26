@@ -9,7 +9,7 @@ import tweepy
 import quantumrand
 import random
 import nltk
-#import torch
+import torch
 from better_profanity import profanity
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
@@ -18,11 +18,11 @@ from nltk.corpus import words
 
 nltk.download('words')
 
-#torch.cuda.empty_cache()
-#device = torch.device("cuda") 
+torch.cuda.empty_cache()
+device = torch.device("cuda") 
 
-model = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path="distilgpt2")#.to(device)
-tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
+model = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path="gpt2").to(device)
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
 def true_random_randint(min, max):
 
@@ -45,7 +45,7 @@ def true_random_choice(list):
 
 
 def empty_string(match):
-    return ''
+    return ' '
 
 
 def single_space(match):
@@ -57,7 +57,7 @@ def capitalize(text, delimiter):
     if text.find(delimiter) == -1:
         return text
     split_text = [sentence[0].upper()+sentence[1:] for sentence in text.split(delimiter)]
-    return delimiter.join(split_text).replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ')
+    return delimiter.join(split_text)
 
 
 def clean(text):
@@ -72,6 +72,7 @@ def clean(text):
                        cleantext,
                        flags=re.IGNORECASE)
     cleantext = re.sub(r'(\d+)\.', empty_string, cleantext, flags=re.IGNORECASE)
+    cleantext = cleantext.lower()
     cleantext = cleantext.replace('...', '. ').replace('..', '. ').replace('? ?', '? ').replace('(', ' ').replace(')', ' ').replace('"', '').replace(
         ',.', '. ').replace(' ,', ', ').replace(',  ', ', ').replace(' .', '.').replace(
             '.', '. ').replace('.  ', '. ').replace(' .', '.').replace(' !', '!').replace(
@@ -83,16 +84,17 @@ def clean(text):
                                     ' s!', 's!').replace(' s?', 's?').replace(' s,', 's,').replace(
                                         ', e. g.', '.').replace('e. g.', '').replace(' \'', '\'').replace('.,', '.').replace('..', '.')
     cleantext = re.sub('\s{2,}', single_space, cleantext)
-    cleantext = cleantext.strip().lower()
+    cleantext = cleantext.strip()
+    cleantext = cleantext[0].upper()+cleantext[1:]
     cleantext = capitalize(cleantext, '. ')
     cleantext = capitalize(cleantext, '! ')
     cleantext = capitalize(cleantext, '? ')
-    cleantext = cleantext.replace('..', '.')
+    cleantext = cleantext.replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ').replace(' i ', ' I ').replace('..', '.')
     return cleantext
 
 
 def get_generated_catfact(text):
-    inputs = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"]#.to(device)
+    inputs = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"].to(device)
     outputs = model.generate(inputs,
         do_sample=True, 
         min_length=192,
@@ -105,7 +107,7 @@ def get_generated_catfact(text):
 
 
 def get_generated_response(text, length, temp=0.9):
-    inputs = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"]#.to(device)
+    inputs = tokenizer(text, add_special_tokens=False, return_tensors="pt")["input_ids"].to(device)
     outputs = model.generate(inputs,
         do_sample=True, 
         min_length=length,
@@ -165,6 +167,10 @@ def is_content_offensive_or_invalid(content):
     if re.search(offensive, content) is not None:
         return True
 
+    # Filter out single initials, like "T."
+    if re.search("\s[a-zA-Z]\.", content) is not None:
+        return True
+
     if profanity.contains_profanity(content):
         return True
 
@@ -174,7 +180,7 @@ def is_content_offensive_or_invalid(content):
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
             "in this paper", "download here", "a. ", "b. ", "1. ", "2. ", "read more", ".com", ". com ", 
             "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement",
-            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", "instagram", "facebook", "tiktok"
+            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", "instagram", "facebook", "tiktok", "paper by"
     ]):
         return True
 

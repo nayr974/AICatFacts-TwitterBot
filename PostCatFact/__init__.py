@@ -3,7 +3,7 @@ import re
 import time
 
 from datetime import datetime
-from ..utils import clean, get_api, get_generated_catfact, upload_cat_image, true_random_randint, true_random_choice
+from ..utils import clean, get_api, get_generated_catfact, upload_cat_image, true_random_randint, true_random_choice, is_content_offensive_or_invalid
 from ..catfacts import facts
 
 import azure.functions as func
@@ -36,8 +36,8 @@ def main(mytimer: func.TimerRequest) -> None:
 
         try:
             fact = get_generated_catfact(get_seed_facts())
-        except:
-            logging.info('Exception.')
+        except Exception as e:
+            logging.info('Exception.' + str(e))
             time.sleep(15)
             return generate_fact()
 
@@ -51,7 +51,7 @@ def main(mytimer: func.TimerRequest) -> None:
         fact = clean(fact)
         unwanted_chars = re.compile('[\[\]@_#$%^&*()<>/\|}{~:]')
 
-        return fact if fact.find(".") != -1 and unwanted_chars.search(
+        return fact if fact.find(".") != -1 and not is_content_offensive_or_invalid(fact) and unwanted_chars.search(
             fact) == None and not any(x in fact.lower() for x in [
                 " dog ", " dogs ", " rat ", " rats ", " mouse ", " bitch ", " bitches ", " mice ",
                 " shark ", " sharks "
