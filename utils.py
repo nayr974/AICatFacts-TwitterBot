@@ -129,7 +129,7 @@ def get_api():
 
     # authentication of access token and secret
     auth.set_access_token(access_token, access_token_secret)
-    return tweepy.API(auth_handler=auth,
+    return tweepy.API(auth=auth,
                       retry_count=3,
                       timeout=20,
                       wait_on_rate_limit=True,
