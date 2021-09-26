@@ -6,8 +6,11 @@ import datetime
 import random
 from ..utils import clean, get_api, is_content_offensive_or_invalid, get_generated_response, true_random_randint, true_random_choice
 from .topics import cat_fact, other_topics
+import pytz
 
 import azure.functions as func
+
+utc=pytz.UTC
 
 def trim_reply(reply):
     return reply[:reply.rfind('.')+1] if len(reply) < 240 else trim_reply(reply[:reply.rfind('.')])
@@ -15,7 +18,7 @@ def trim_reply(reply):
 
 def get_random_trend(api):
     logging.info("Getting trend")
-    trending = api.trends_place(23424977)  #USA
+    trending = api.get_place_trends(23424977)  #USA
 
     def get_safe_trend(trending):
         trend = true_random_choice(trending[0]['trends'][:15])
@@ -131,8 +134,8 @@ def main(mytimer: func.TimerRequest) -> None:
         tweets = get_topic_tweets(api)
 
         for tweet in tweets:
-            recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
-                                               datetime.timedelta(minutes=44))
+            recent_tweet = tweet.created_at > utc.localize((datetime.datetime.utcnow() -
+                                               datetime.timedelta(minutes=44)))
             if not recent_tweet:
                 continue
             

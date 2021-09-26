@@ -13,7 +13,7 @@ import torch
 from better_profanity import profanity
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, GPTJForCausalLM
 from nltk.corpus import words
 
 nltk.download('words')
@@ -21,8 +21,9 @@ nltk.download('words')
 torch.cuda.empty_cache()
 device = torch.device("cuda") 
 
-model = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path="gpt2").to(device)
-tokenizer = AutoTokenizer.from_pretrained("gpt2")
+model =  GPTJForCausalLM.from_pretrained("EleutherAI/gpt-j-6B", torch_dtype=torch.float16).to(device)
+#model = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path="EleutherAI/gpt-j-6B").to(device)
+tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
 
 def true_random_randint(min, max):
 
@@ -89,7 +90,7 @@ def clean(text):
     cleantext = capitalize(cleantext, '. ')
     cleantext = capitalize(cleantext, '! ')
     cleantext = capitalize(cleantext, '? ')
-    cleantext = cleantext.replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ').replace(' i ', ' I ').replace('..', '.')
+    cleantext = cleantext.replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ').replace(' i ', ' I ').replace(' i\' ', ' I\' ').replace('..', '.')
     return cleantext
 
 
@@ -100,9 +101,8 @@ def get_generated_catfact(text):
         min_length=192,
         max_length=512,
         top_p=0.85, 
-        top_k=50,
         length_penalty=0.5,
-        temperature=1.4)
+        temperature=1.3)
     return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(text):]
 
 
@@ -129,11 +129,10 @@ def get_api():
 
     # authentication of access token and secret
     auth.set_access_token(access_token, access_token_secret)
-    return tweepy.API(auth_handler=auth,
+    return tweepy.API(auth=auth,
                       retry_count=3,
                       timeout=20,
-                      wait_on_rate_limit=True,
-                      wait_on_rate_limit_notify=True)
+                      wait_on_rate_limit=True)
 
 
 def upload_cat_image():
@@ -180,7 +179,7 @@ def is_content_offensive_or_invalid(content):
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
             "in this paper", "download here", "a. ", "b. ", "1. ", "2. ", "read more", ".com", ". com ", 
             "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement",
-            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", "instagram", "facebook", "tiktok", "paper by"
+            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", "instagram", "facebook", "tiktok", "paper by", "book"
     ]):
         return True
 

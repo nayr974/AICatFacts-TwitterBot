@@ -2,9 +2,11 @@ import logging
 import re
 import datetime
 from ..utils import clean, get_api, is_content_offensive_or_invalid, get_generated_response, true_random_randint, true_random_choice
+import pytz
 
 import azure.functions as func
 
+utc=pytz.UTC
 
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
@@ -13,8 +15,8 @@ def main(mytimer: func.TimerRequest) -> None:
     mentions = api.mentions_timeline(count=5, tweet_mode='extended')
 
     for tweet in mentions:
-        recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
-                                           datetime.timedelta(minutes=5))
+        recent_tweet = tweet.created_at > utc.localize((datetime.datetime.utcnow() -
+                                           datetime.timedelta(minutes=5)))
         if recent_tweet and tweet.user.screen_name != "AICatFacts":
 
             cleantext = clean(tweet.full_text)

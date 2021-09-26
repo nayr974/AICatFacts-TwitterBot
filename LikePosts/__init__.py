@@ -10,7 +10,7 @@ def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     logging.info("Search terms")
-    tweets = api.search(
+    tweets = api.search_tweets(
         q=
         f'"artificial intelligence" OR "cute cat" OR "adorable cat" OR "machine learning" OR "cat fact" OR "#catsoftwitter" filter:safe -filter:links -filter:retweets',
         lang='en',

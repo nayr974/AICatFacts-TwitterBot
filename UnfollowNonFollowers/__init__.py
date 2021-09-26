@@ -1,6 +1,7 @@
 import logging
 import time
 from ..utils import get_api, true_random_randint, true_random_choice
+import tweepy
 
 import azure.functions as func
 
@@ -8,8 +9,8 @@ import azure.functions as func
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
-    followers = api.followers_ids('AICatFacts')
-    friends = api.friends_ids('AICatFacts')
+    followers = api.get_follower_ids('AICatFacts')
+    friends = api.get_friend_ids('AICatFacts')
 
     unfollow_count = 0
 

@@ -9,7 +9,7 @@ import azure.functions as func
 def followall(api):
     follow_count = 0;
     logging.info('Following followers.')
-    for follower in tweepy.Cursor(api.followers).items():
+    for follower in tweepy.Cursor(api.get_followers).items():
         if follow_count >= 1:
             break
 

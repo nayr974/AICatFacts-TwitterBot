@@ -2,19 +2,21 @@ import logging
 import re
 import datetime
 from ..utils import clean, get_api, is_content_offensive_or_invalid, get_generated_response, true_random_randint, true_random_choice
+import pytz
 
 import azure.functions as func
 
+utc=pytz.UTC
 
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
 
     logging.info("Getting retweets")
-    retweets = api.retweets_of_me(count=3, tweet_mode='extended')
+    retweets = api.get_retweets_of_me(count=3, tweet_mode='extended')
 
     for tweet in retweets:
-        recent_tweet = tweet.created_at > (datetime.datetime.utcnow() -
-                                           datetime.timedelta(minutes=5))
+        recent_tweet = tweet.created_at > utc.localize((datetime.datetime.utcnow() -
+                                           datetime.timedelta(minutes=5)))
         if recent_tweet and tweet.quoted_status:
 
             cleantext = clean(tweet.full_text)

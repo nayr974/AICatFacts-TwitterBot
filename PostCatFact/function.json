@@ -5,7 +5,7 @@
       "name": "mytimer",
       "type": "timerTrigger",
       "direction": "in",
-      "schedule": "0 0 14,15,17,21,22,23 * * *"
+      "schedule": "0 0 6,8,10,14,16,18,20 * * *"
     }
   ]
 }
