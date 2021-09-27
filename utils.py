@@ -13,7 +13,7 @@ import torch
 from better_profanity import profanity
 from datetime import datetime, timedelta
 from urllib.request import Request, urlopen
-from transformers import AutoModelForCausalLM, AutoTokenizer, GPTJForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from nltk.corpus import words
 
 nltk.download('words')
@@ -21,9 +21,9 @@ nltk.download('words')
 torch.cuda.empty_cache()
 device = torch.device("cuda") 
 
-model =  GPTJForCausalLM.from_pretrained("EleutherAI/gpt-j-6B", torch_dtype=torch.float16).to(device)
+model =  AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-neo-2.7B").to(device)
 #model = AutoModelForCausalLM.from_pretrained(pretrained_model_name_or_path="EleutherAI/gpt-j-6B").to(device)
-tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
+tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-2.7B")
 
 def true_random_randint(min, max):
 
