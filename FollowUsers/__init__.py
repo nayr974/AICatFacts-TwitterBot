@@ -9,7 +9,7 @@ import azure.functions as func
 def main(mytimer: func.TimerRequest) -> None:
     api = get_api()
     logging.info('Searching hashtags')
-    tweets = api.search(
+    tweets = api.search_tweets(
         q=f'"#catsoftwitter" OR "machine learning" OR "artificial intelligence" filter:safe -filter:links -filter:retweets ',
         count=50,
         locale='en', 

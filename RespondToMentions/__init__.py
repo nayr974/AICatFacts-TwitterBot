@@ -20,7 +20,7 @@ def main(mytimer: func.TimerRequest) -> None:
         if recent_tweet and tweet.user.screen_name != "AICatFacts":
 
             cleantext = clean(tweet.full_text)
-            if not is_content_offensive_or_invalid(cleantext):
+            if not is_content_offensive_or_invalid(cleantext, mention=True):
                 logging.info('Good mention. Replying to: ' + cleantext)
 
                 generate_count = 0
@@ -70,5 +70,8 @@ def main(mytimer: func.TimerRequest) -> None:
                     api.retweet(tweet.id)
 
                 logging.info("Liking tweet")
-                api.create_favorite(tweet.id)
-                logging.info("Liked.")
+                try:
+                    api.create_favorite(tweet.id)
+                    logging.info("Liked.")
+                except:
+                    logging.info("Already liked?")

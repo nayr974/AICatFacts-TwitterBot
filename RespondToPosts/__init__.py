@@ -32,7 +32,7 @@ def get_random_trend(api):
 
 def get_tweets(api, topic):
     logging.info("Getting tweets for " + topic["search_term"] + '   ' + topic["result_type"])
-    return api.search(q=topic["search_term"],
+    return api.search_tweets(q=topic["search_term"],
                       result_type=topic["result_type"],
                       count=100,
                       lang='en',
@@ -72,7 +72,8 @@ def get_generated_prompt(api, prompts):
 
             if not any(x in generated_prompt.lower() for x in [
                 "cat ", "cat ", "cats ", " cats" "cat.", "cats.", "cats'", "cat's", "kitten", "kitties", "kitty", "fact",
-                "feline", "lion", "tiger", "cheetah", "machine learning", "artificial intelligence", " ai ", " a.i. ", "ai's", " ai."
+                "feline", "lion", "tiger", "cheetah", "machine learning", "artificial intelligence", " ai ", " a.i. ", "ai's", " ai.",
+                "cyborg", "meow"
             ]):
                 logging.info("Prompt doesn't mention topic. " + generated_prompt)
                 return get_prompt()
@@ -135,7 +136,7 @@ def main(mytimer: func.TimerRequest) -> None:
 
         for tweet in tweets:
             recent_tweet = tweet.created_at > utc.localize((datetime.datetime.utcnow() -
-                                               datetime.timedelta(minutes=44)))
+                                               datetime.timedelta(minutes=107)))
             if not recent_tweet:
                 continue
             

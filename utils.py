@@ -90,7 +90,7 @@ def clean(text):
     cleantext = capitalize(cleantext, '. ')
     cleantext = capitalize(cleantext, '! ')
     cleantext = capitalize(cleantext, '? ')
-    cleantext = cleantext.replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ').replace(' i ', ' I ').replace(' i\' ', ' I\' ').replace('..', '.')
+    cleantext = cleantext.replace(' ai ', ' A.I. ').replace(' a.i. ', ' A.I. ').replace(' ai. ', ' AI. ').replace(' ai, ', ' AI, ').replace(' i ', ' I ').replace(' i\' ', ' I\' ').replace('..', '.')
     return cleantext
 
 
@@ -161,10 +161,14 @@ def upload_cat_image():
                 return media_object
 
 
-def is_content_offensive_or_invalid(content):
+def is_content_offensive_or_invalid(content, mention=False):
 
+    if mention:
+        return False
+        
     if re.search(offensive, content) is not None:
         return True
+
 
     # Filter out single initials, like "T."
     if re.search("\s[a-zA-Z]\.", content) is not None:
@@ -179,7 +183,8 @@ def is_content_offensive_or_invalid(content):
             "rape", "obama", "trump", "passed away", "died", "death", "passing of", "vet", "sick", 
             "in this paper", "download here", "a. ", "b. ", "1. ", "2. ", "read more", ".com", ". com ", 
             "check here", ". com.", " dr.", "bark", "cats a lot. you said", "podcast", "intercourse", "advertisement",
-            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", "instagram", "facebook", "tiktok", "paper by", "book"
+            "adopt", "shelter", ". pic.", ". twitter.", "reddit", "all rights reserved", "this post", "youtube", 
+            "instagram", "facebook", "tiktok", "paper by", "book", "fact number"
     ]):
         return True
 

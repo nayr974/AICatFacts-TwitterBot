@@ -17,7 +17,7 @@ def main(mytimer: func.TimerRequest) -> None:
     for tweet in retweets:
         recent_tweet = tweet.created_at > utc.localize((datetime.datetime.utcnow() -
                                            datetime.timedelta(minutes=5)))
-        if recent_tweet and tweet.quoted_status:
+        if recent_tweet and tweet.is_quote_status:
 
             cleantext = clean(tweet.full_text)
             if not is_content_offensive_or_invalid(cleantext):
